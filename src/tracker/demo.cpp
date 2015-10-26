@@ -1,3 +1,4 @@
+#include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
@@ -16,39 +17,52 @@ int main(int argc, char* argv[])
         cout << "Cannot open the video cam" << endl;
         return -1;
     }
+    
+    CascadeClassifier face_cascade;
+    face_cascade.load("./haarcascade_frontalface_alt.xml");
+    
 
+    
     namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
-    namedWindow("Norm",CV_WINDOW_AUTOSIZE); //create a window
     while (true)
     {
         Mat frame; //images use the Mat type from openCV
 
         bool frameRead = cap.read(frame); // read a new frame from video
-
+        
+        vector<Rect> faces;
+        face_cascade.detectMultiScale(frame, faces,
+                                   1.1, 3, 0
+                                   //|CASCADE_FIND_BIGGEST_OBJECT
+                                   //|CASCADE_DO_ROUGH_SEARCH
+                                 |CASCADE_SCALE_IMAGE);
+        
+        //this should help in high contrast settings (eg if a window is behind you)
+//        //equalize the Value channel
+//        Mat channels[3];
+//        //convert to HSV from RGB
+//        cvtColor(frame, frame, CV_RGB2HSV);
+//        //split into H, S and V channels
+//        split(frame, channels);
+//        //equalize only the V channel.
+//        equalizeHist(channels[2], channels[2]);
+//        //remerge
+//        merge(channels, 3, frame);
+//        //convert back to RGB
+//        cvtColor(frame, frame, CV_HSV2RGB);
+        
+        for ( auto &i : faces ) {
+            rectangle(frame, i, Scalar( 255, 0, 0 ));
+        }
+        
         if (!frameRead) //break loop if can't get frame
         {
              cout << "Cannot read a frame from video stream" << endl;
              break;
         }
-        Mat kernel_x = (Mat_<double>(3,3) <<
-                        -1, 0, 1,
-                        -2, 0, 2,
-                        -1, 0, 1
-                        );
-        Mat kernel_y = (Mat_<double>(3,3) <<
-                        -1, -2, -1,
-                         0,  0,  0,
-                         1,  2,  1
-                        );
+
         
-        Mat G_x;
-        Mat G_y;
-        
-        imshow("Norm", frame);
-        
-        filter2D(frame, G_x, -1, kernel_x);
-        filter2D(frame, G_y, -1, kernel_y);
-        imshow("Demo", G_x); //show the frame
+        imshow("Demo", frame); //show the frame
 
         if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. Done like this on advice that HighGui requires regular calls to waitKey...
         { 
