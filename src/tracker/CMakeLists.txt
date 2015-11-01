@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
+SET(CMAKE_CXX_FLAGS "-std=c++0x")
 project( Demo )
 include_directories( /usr/local/include/ )
 find_package( OpenCV REQUIRED )
