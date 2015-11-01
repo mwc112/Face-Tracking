@@ -26,3 +26,9 @@
 *.exe
 *.out
 *.app
+Demo
+
+#because cmake
+*.cmake
+Makefile
+CMake*
