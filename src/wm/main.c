@@ -24,15 +24,13 @@ int main(void){
 	for(int i = 0; i < num_children; i++){
 		XWindowAttributes *attr = attrs+i;
 		if((XGetWindowAttributes(d, children_windows_ret[i], attr))==0){
-			printf("ERROR: Failed to get attributes for child %i\n", 1);
+			printf("ERROR: Failed to get attributes for child %i\n", i);
 		}
 	}
 
-
-
-
 	for(int i = 0; i < num_children; i++){
-			printf("x: %i  y: %i\n", attrs[i].x, attrs[i].y);
+			printf("x: %i  y: %i\nsize: %i, %i\n\n", attrs[i].x, attrs[i].y,
+																					attrs[i].width, attrs[i].height);
 	}
 
 	XCloseDisplay(d);
