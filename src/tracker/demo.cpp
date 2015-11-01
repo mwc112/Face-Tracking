@@ -22,9 +22,11 @@ int main(int argc, char* argv[])
     CascadeClassifier face_cascade;
     CascadeClassifier lefteye_cascade;
     CascadeClassifier righteye_cascade;
+    CascadeClassifier nose_cascade;
     face_cascade.load("./haarcascade_frontalface_alt.xml");
-    lefteye_cascade.load("/Users/jonathan/Downloads/opencv-3.0.0/data/haarcascades/haarcascade_lefteye_2splits.xml");
-    righteye_cascade.load("/Users/jonathan/Downloads/opencv-3.0.0/data/haarcascades/haarcascade_righteye_2splits.xml");
+    lefteye_cascade.load("./haarcascade_lefteye_2splits.xml");
+    righteye_cascade.load("./haarcascade_righteye_2splits.xml");
+    nose_cascade.load("./haarcascade_mcs_nose.xml");
 
     
     namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
@@ -51,14 +53,20 @@ int main(int argc, char* argv[])
                                       |CASCADE_SCALE_IMAGE);
         
         if (faces.size() >= 1) {
-             Rect r = faces[0];
+            Rect r = faces[0];
             r.y += 2*r.height/9;
-            r.height = r.height/3;
+            r.height = r.height/2;
 
             Mat roi = frame(r);
+            vector<Rect> noses;
             vector<Rect> righteyes;
-            
             vector<Rect> lefteyes;
+            nose_cascade.detectMultiScale(roi, noses,
+                                         1.1, 3, 0
+                                         //|CASCADE_FIND_BIGGEST_OBJECT
+                                         //|CASCADE_DO_ROUGH_SEARCH
+                                              |CASCADE_SCALE_IMAGE,
+                                              Size(0,r.height/2), Size(r.width, r.height));
             righteye_cascade.detectMultiScale(roi, righteyes,
                                          1.1, 3, 0
                                          //|CASCADE_FIND_BIGGEST_OBJECT
@@ -72,7 +80,10 @@ int main(int argc, char* argv[])
                                          |CASCADE_SCALE_IMAGE,
                                              Size(0,r.height/2), Size(r.width, r.height));
             for ( auto &i : righteyes ) {
-                rectangle(roi, i, Scalar( 0,  225, 0 ));
+                rectangle(roi, i, Scalar( 0,  225, 255 ));
+            }
+            for ( auto &i : noses ) {
+                rectangle(roi, i, Scalar( 255,  225, 255 ));
             }
             for ( auto &i : lefteyes ) {
                 rectangle(roi, i, Scalar( 255,  225, 0));
