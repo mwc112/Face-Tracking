@@ -32,6 +32,19 @@ int main(int argc, char* argv[])
     namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
     auto start_time = time(0);
     auto frameCount = 0;
+    
+    Mat frame; //images use the Mat type from openCV
+    bool frameRead = cap.read(frame); // read a new frame from video
+    
+    vector<Rect> faces;
+    face_cascade.detectMultiScale(frame, faces,
+                                   1.1, 3, 0
+                                   //|CASCADE_FIND_BIGGEST_OBJECT
+                                   //|CASCADE_DO_ROUGH_SEARCH
+                                      |CASCADE_SCALE_IMAGE);
+                                      
+    Mat head = frame(faces[0]); //This is replacing roi                               
+    
     while (true)
     {
         frameCount++;
@@ -40,57 +53,68 @@ int main(int argc, char* argv[])
             cout << "FPS:" <<  frameCount << endl;
             frameCount = 0;
         }
-        
-        Mat frame; //images use the Mat type from openCV
 
         bool frameRead = cap.read(frame); // read a new frame from video
         
-        vector<Rect> faces;
-        face_cascade.detectMultiScale(frame, faces,
+       /* face_cascade.detectMultiScale(frame, faces,
+                                   1.1, 3, 0
+                                   //|CASCADE_FIND_BIGGEST_OBJECT
+                                   //|CASCADE_DO_ROUGH_SEARCH
+                                      |CASCADE_SCALE_IMAGE);*/
+        
+        if (faces.size() >= 1) {
+        	
+        	face_cascade.detectMultiScale(head, faces,
                                    1.1, 3, 0
                                    //|CASCADE_FIND_BIGGEST_OBJECT
                                    //|CASCADE_DO_ROUGH_SEARCH
                                       |CASCADE_SCALE_IMAGE);
-        
-        if (faces.size() >= 1) {
+        	
             Rect r = faces[0];
             r.y += 2*r.height/9;
             r.height = r.height/2;
 
-            Mat roi = frame(r);
             vector<Rect> noses;
             vector<Rect> righteyes;
             vector<Rect> lefteyes;
-            nose_cascade.detectMultiScale(roi, noses,
+            nose_cascade.detectMultiScale(head, noses,
                                          1.1, 3, 0
                                          //|CASCADE_FIND_BIGGEST_OBJECT
                                          //|CASCADE_DO_ROUGH_SEARCH
                                               |CASCADE_SCALE_IMAGE,
                                               Size(0,r.height/2), Size(r.width, r.height));
-            righteye_cascade.detectMultiScale(roi, righteyes,
+            righteye_cascade.detectMultiScale(head, righteyes,
                                          1.1, 3, 0
                                          //|CASCADE_FIND_BIGGEST_OBJECT
                                          //|CASCADE_DO_ROUGH_SEARCH
                                               |CASCADE_SCALE_IMAGE,
-                                              Size(0,r.height/2), Size(r.width, r.height));
-            lefteye_cascade.detectMultiScale(roi, lefteyes,
+                                              Size(0,r.height/2), Size(r.width, r.height)); 
+            lefteye_cascade.detectMultiScale(head, lefteyes,
                                          1.1, 3, 0
                                          //|CASCADE_FIND_BIGGEST_OBJECT
                                          //|CASCADE_DO_ROUGH_SEARCH
                                          |CASCADE_SCALE_IMAGE,
-                                             Size(0,r.height/2), Size(r.width, r.height));
+                                             Size(0,r.height/2), Size(r.width, r.height)); 
             for ( auto &i : righteyes ) {
-                rectangle(roi, i, Scalar( 0,  225, 255 ));
-            }
+                rectangle(head, i, Scalar( 0,  225, 255 ));
+            } 
             for ( auto &i : noses ) {
-                rectangle(roi, i, Scalar( 255,  225, 255 ));
-            }
+                rectangle(head, i, Scalar( 255,  225, 255 ));
+            } 
             for ( auto &i : lefteyes ) {
-                rectangle(roi, i, Scalar( 255,  225, 0));
+                rectangle(head, i, Scalar( 255,  225, 0));
             }
-            rectangle(frame, r, Scalar(255,0,0));
-            rectangle(frame, faces[0], Scalar(0,0,255));
-           
+            rectangle(head, r, Scalar(255,0,0));
+            rectangle(head, faces[0], Scalar(0,0,255));
+                       
+        }  else {
+        	//If we lose the face, recalculate from scratch
+        	face_cascade.detectMultiScale(frame, faces,
+                                   1.1, 3, 0
+                                   //|CASCADE_FIND_BIGGEST_OBJECT
+                                   //|CASCADE_DO_ROUGH_SEARCH
+                                      |CASCADE_SCALE_IMAGE);
+            head = frame(faces[0]);                        
         }
          imshow("Demo", frame); //show the frame
         
