@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
+#include <future>
 
 using namespace cv;
 using namespace std;
@@ -48,8 +49,77 @@ const Scalar FACE_COLOR = Scalar(0,0,255);
 const Scalar EYE_REGION_COLOR = Scalar(255,0,0);
 const Scalar NOSE_REGION_COLOR = Scalar(155,0,0);
 
-int main(int argc, char* argv[])
-{
+
+Rect averageRect(vector<Rect> rects) {
+    if (rects.size() == 0) {
+        return Rect();
+    }
+    Rect r = rects[0];
+    for (auto i : rects) {
+        r |= i;
+    }
+    return r;
+}
+
+
+struct Face {
+    Rect leftEye;
+    Rect rightEye;
+    Rect nose;
+    Rect face;
+};
+
+CascadeClassifier face_cascade, lefteye_cascade, righteye_cascade, nose_cascade;
+
+Face detectFaceFeatures(Mat frame) {
+    Face face;
+    vector<Rect> faces;
+    face_cascade.detectMultiScale(frame, faces, 1.1, 3, CASCADE_SCALE_IMAGE);
+
+    if (faces.size() >= 1) {
+        Rect r_eyes = estimateEyesRegion(faces[0]);
+        Rect r_nose = estimateNoseRegion(faces[0]);
+
+        Mat roi_nose = frame(r_nose);
+        Mat roi_eyes = frame(r_eyes);
+
+        vector<Rect> noses, rightEyes, leftEyes, eyes;
+        nose_cascade.detectMultiScale(roi_nose, noses,
+                                      1.1, 3, CASCADE_SCALE_IMAGE,
+                                      Size(0,r_nose.height/2), Size(r_nose.width, r_nose.height));
+        righteye_cascade.detectMultiScale(roi_eyes, eyes,
+                                          1.1, 3, CASCADE_SCALE_IMAGE,
+                                          Size(0,r_eyes.height/2), Size(r_eyes.width, r_eyes.height));
+        lefteye_cascade.detectMultiScale(roi_eyes, eyes,
+                                         1.1, 3, CASCADE_SCALE_IMAGE,
+                                         Size(0,r_eyes.height/2), Size(r_eyes.width, r_eyes.height));
+        for (auto eye : eyes) {
+            if (eye.x >= r_eyes.width/2) {
+                rightEyes.push_back(eye);
+            } else {
+                leftEyes.push_back(eye);
+            }
+        }
+        face.face = faces[0];
+        face.nose = averageRect(noses) + r_nose.tl();
+        face.rightEye = averageRect(rightEyes) + r_eyes.tl();
+        face.leftEye = averageRect(leftEyes) + r_eyes.tl();
+    }
+    return face;
+}
+
+void detectAndShow(Mat frame) {
+    Face face = detectFaceFeatures(frame);
+    
+    rectangle(frame, face.nose, NOSE_COLOR);
+    rectangle(frame, face.rightEye, RIGHT_EYE_COLOR);
+    rectangle(frame, face.leftEye, LEFT_EYE_COLOR);
+    rectangle(frame, face.face, FACE_COLOR);
+    
+    imshow("Demo", frame); //show the frame
+}
+
+int main(int argc, char* argv[]) {
     VideoCapture cap(0); // open camera 0
 
     if (!cap.isOpened())  // exit if can't open
@@ -58,7 +128,7 @@ int main(int argc, char* argv[])
         return -1;
     }
     
-    CascadeClassifier face_cascade, lefteye_cascade, righteye_cascade, nose_cascade;
+    
     face_cascade.load("./haarcascade_frontalface_alt.xml");
     lefteye_cascade.load("./haarcascade_lefteye_2splits.xml");
     righteye_cascade.load("./haarcascade_righteye_2splits.xml");
@@ -81,44 +151,9 @@ int main(int argc, char* argv[])
 
         bool frameRead = cap.read(frame); // read a new frame from video
         
-        vector<Rect> faces;
-        face_cascade.detectMultiScale(frame, faces, 1.1, 3, CASCADE_SCALE_IMAGE);
-        
-        if (faces.size() >= 1) {
+//        detectAndShow(frame);
 
-            Rect r_eyes = estimateEyesRegion(faces[0]);
-            Rect r_nose = estimateNoseRegion(faces[0]);
-            
-            Mat roi_eyes = frame(r_eyes);
-            Mat roi_nose = frame(r_nose);
-            
-            vector<Rect> noses, righteyes, lefteyes;
-            nose_cascade.detectMultiScale(roi_nose, noses,
-                                         1.1, 3, CASCADE_SCALE_IMAGE,
-                                              Size(0,r_nose.height/2), Size(r_nose.width, r_nose.height));
-            righteye_cascade.detectMultiScale(roi_eyes, righteyes,
-                                         1.1, 3, CASCADE_SCALE_IMAGE,
-                                              Size(0,r_eyes.height/2), Size(r_eyes.width, r_eyes.height));
-            lefteye_cascade.detectMultiScale(roi_eyes, lefteyes,
-                                         1.1, 3, CASCADE_SCALE_IMAGE,
-                                             Size(0,r_eyes.height/2), Size(r_eyes.width, r_eyes.height));
-
-            for ( auto &i : noses ) {
-                rectangle(roi_nose, i, NOSE_COLOR);
-            }
-            for ( auto &i : righteyes ) {
-                rectangle(roi_eyes, i, RIGHT_EYE_COLOR);
-            }
-            for ( auto &i : lefteyes ) {
-                rectangle(roi_eyes, i, LEFT_EYE_COLOR);
-            }
-            rectangle(frame, faces[0], FACE_COLOR);
-            
-            rectangle(frame, r_eyes, EYE_REGION_COLOR);
-            rectangle(frame, r_nose, NOSE_REGION_COLOR);
-           
-        }
-        imshow("Demo", frame); //show the frame
+        std::async(std::launch::async, detectAndShow, frame);
 
         if (!frameRead) //break loop if can't get frame
         {
