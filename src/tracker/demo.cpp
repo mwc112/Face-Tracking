@@ -9,6 +9,45 @@
 using namespace cv;
 using namespace std;
 
+
+
+Rect estimateNoseRegion(Rect face_r) {
+    Rect &nose_r = face_r;
+    nose_r.y += 2*nose_r.height/9;
+    nose_r.height = nose_r.height/2;
+    return nose_r;
+}
+
+Rect estimateEyesRegion(Rect face_r) {
+    Rect eyes_r = face_r;
+    eyes_r.y += 2*eyes_r.height/9;
+    eyes_r.height = eyes_r.height/3;
+    return eyes_r;
+}
+
+void equalizeFrame(Mat &frame) {
+    //this should help in high contrast settings (eg if a window is behind you)
+    //equalize the Value channel
+    Mat channels[3];
+    //convert to HSV from RGB
+    cvtColor(frame, frame, CV_RGB2HSV);
+    //split into H, S and V channels
+    split(frame, channels);
+    //equalize only the V channel.
+    equalizeHist(channels[2], channels[2]);
+    //remerge
+    merge(channels, 3, frame);
+    //convert back to RGB
+    cvtColor(frame, frame, CV_HSV2RGB);
+}
+
+const Scalar NOSE_COLOR = Scalar(255, 225, 255);
+const Scalar LEFT_EYE_COLOR = Scalar(255, 225, 0);
+const Scalar RIGHT_EYE_COLOR = Scalar(0, 225, 255);
+const Scalar FACE_COLOR = Scalar(0,0,255);
+const Scalar EYE_REGION_COLOR = Scalar(255,0,0);
+const Scalar NOSE_REGION_COLOR = Scalar(155,0,0);
+
 int main(int argc, char* argv[])
 {
     VideoCapture cap(0); // open camera 0
@@ -19,10 +58,7 @@ int main(int argc, char* argv[])
         return -1;
     }
     
-    CascadeClassifier face_cascade;
-    CascadeClassifier lefteye_cascade;
-    CascadeClassifier righteye_cascade;
-    CascadeClassifier nose_cascade;
+    CascadeClassifier face_cascade, lefteye_cascade, righteye_cascade, nose_cascade;
     face_cascade.load("./haarcascade_frontalface_alt.xml");
     lefteye_cascade.load("./haarcascade_lefteye_2splits.xml");
     righteye_cascade.load("./haarcascade_righteye_2splits.xml");
@@ -41,86 +77,49 @@ int main(int argc, char* argv[])
             frameCount = 0;
         }
         
-        Mat frame; //images use the Mat type from openCV
+        Mat frame;
 
         bool frameRead = cap.read(frame); // read a new frame from video
         
         vector<Rect> faces;
-        face_cascade.detectMultiScale(frame, faces,
-                                   1.1, 3, 0
-                                   //|CASCADE_FIND_BIGGEST_OBJECT
-                                   //|CASCADE_DO_ROUGH_SEARCH
-                                      |CASCADE_SCALE_IMAGE);
+        face_cascade.detectMultiScale(frame, faces, 1.1, 3, CASCADE_SCALE_IMAGE);
         
         if (faces.size() >= 1) {
-            Rect r_nose = faces[0];
-            r_nose.y += 2*r_nose.height/9;
-            r_nose.height = r_nose.height/2;
 
-            Rect r_eyes = faces[0];
-            r_eyes.y += 2*r_eyes.height/9;
-            r_eyes.height = r_eyes.height/3;
+            Rect r_eyes = estimateEyesRegion(faces[0]);
+            Rect r_nose = estimateNoseRegion(faces[0]);
             
             Mat roi_eyes = frame(r_eyes);
             Mat roi_nose = frame(r_nose);
-            vector<Rect> noses;
-            vector<Rect> righteyes;
-            vector<Rect> lefteyes;
+            
+            vector<Rect> noses, righteyes, lefteyes;
             nose_cascade.detectMultiScale(roi_nose, noses,
-                                         1.1, 3, 0
-                                         //|CASCADE_FIND_BIGGEST_OBJECT
-                                         //|CASCADE_DO_ROUGH_SEARCH
-                                              |CASCADE_SCALE_IMAGE,
+                                         1.1, 3, CASCADE_SCALE_IMAGE,
                                               Size(0,r_nose.height/2), Size(r_nose.width, r_nose.height));
             righteye_cascade.detectMultiScale(roi_eyes, righteyes,
-                                         1.1, 3, 0
-                                         //|CASCADE_FIND_BIGGEST_OBJECT
-                                         //|CASCADE_DO_ROUGH_SEARCH
-                                              |CASCADE_SCALE_IMAGE,
+                                         1.1, 3, CASCADE_SCALE_IMAGE,
                                               Size(0,r_eyes.height/2), Size(r_eyes.width, r_eyes.height));
             lefteye_cascade.detectMultiScale(roi_eyes, lefteyes,
-                                         1.1, 3, 0
-                                         //|CASCADE_FIND_BIGGEST_OBJECT
-                                         //|CASCADE_DO_ROUGH_SEARCH
-                                         |CASCADE_SCALE_IMAGE,
+                                         1.1, 3, CASCADE_SCALE_IMAGE,
                                              Size(0,r_eyes.height/2), Size(r_eyes.width, r_eyes.height));
-            for ( auto &i : righteyes ) {
-                rectangle(roi_eyes, i, Scalar( 0,  225, 255 ));
-            }
+
             for ( auto &i : noses ) {
-                rectangle(roi_nose, i, Scalar( 255,  225, 255 ));
+                rectangle(roi_nose, i, NOSE_COLOR);
+            }
+            for ( auto &i : righteyes ) {
+                rectangle(roi_eyes, i, RIGHT_EYE_COLOR);
             }
             for ( auto &i : lefteyes ) {
-                rectangle(roi_eyes, i, Scalar( 255,  225, 0));
+                rectangle(roi_eyes, i, LEFT_EYE_COLOR);
             }
-            rectangle(frame, r_eyes, Scalar(255,0,0));
-            rectangle(frame, r_nose, Scalar(155,0,0));
-            rectangle(frame, faces[0], Scalar(0,0,255));
+            rectangle(frame, faces[0], FACE_COLOR);
+            
+            rectangle(frame, r_eyes, EYE_REGION_COLOR);
+            rectangle(frame, r_nose, NOSE_REGION_COLOR);
            
         }
-         imshow("Demo", frame); //show the frame
-        
-        //this should help in high contrast settings (eg if a window is behind you)
-//        //equalize the Value channel
-//        Mat channels[3];
-//        //convert to HSV from RGB
-//        cvtColor(frame, frame, CV_RGB2HSV);
-//        //split into H, S and V channels
-//        split(frame, channels);
-//        //equalize only the V channel.
-//        equalizeHist(channels[2], channels[2]);
-//        //remerge
-//        merge(channels, 3, frame);
-//        //convert back to RGB
-//        cvtColor(frame, frame, CV_HSV2RGB);
-        
-//        for ( auto &i : faces ) {
-//            rectangle(frame, i, Scalar( 255, 0, 0 ));
-//        }
-//        
-//        for ( auto &i : eyes ) {
-//            rectangle(frame, i, Scalar( 0,  225, 0 ));
-//        }
+        imshow("Demo", frame); //show the frame
+
         if (!frameRead) //break loop if can't get frame
         {
              cout << "Cannot read a frame from video stream" << endl;
