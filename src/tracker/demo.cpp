@@ -53,42 +53,48 @@ int main(int argc, char* argv[])
                                       |CASCADE_SCALE_IMAGE);
         
         if (faces.size() >= 1) {
-            Rect r = faces[0];
-            r.y += 2*r.height/9;
-            r.height = r.height/2;
+            Rect r_nose = faces[0];
+            r_nose.y += 2*r_nose.height/9;
+            r_nose.height = r_nose.height/2;
 
-            Mat roi = frame(r);
+            Rect r_eyes = faces[0];
+            r_eyes.y += 2*r_eyes.height/9;
+            r_eyes.height = r_eyes.height/3;
+            
+            Mat roi_eyes = frame(r_eyes);
+            Mat roi_nose = frame(r_nose);
             vector<Rect> noses;
             vector<Rect> righteyes;
             vector<Rect> lefteyes;
-            nose_cascade.detectMultiScale(roi, noses,
+            nose_cascade.detectMultiScale(roi_nose, noses,
                                          1.1, 3, 0
                                          //|CASCADE_FIND_BIGGEST_OBJECT
                                          //|CASCADE_DO_ROUGH_SEARCH
                                               |CASCADE_SCALE_IMAGE,
-                                              Size(0,r.height/2), Size(r.width, r.height));
-            righteye_cascade.detectMultiScale(roi, righteyes,
+                                              Size(0,r_nose.height/2), Size(r_nose.width, r_nose.height));
+            righteye_cascade.detectMultiScale(roi_eyes, righteyes,
                                          1.1, 3, 0
                                          //|CASCADE_FIND_BIGGEST_OBJECT
                                          //|CASCADE_DO_ROUGH_SEARCH
                                               |CASCADE_SCALE_IMAGE,
-                                              Size(0,r.height/2), Size(r.width, r.height));
-            lefteye_cascade.detectMultiScale(roi, lefteyes,
+                                              Size(0,r_eyes.height/2), Size(r_eyes.width, r_eyes.height));
+            lefteye_cascade.detectMultiScale(roi_eyes, lefteyes,
                                          1.1, 3, 0
                                          //|CASCADE_FIND_BIGGEST_OBJECT
                                          //|CASCADE_DO_ROUGH_SEARCH
                                          |CASCADE_SCALE_IMAGE,
-                                             Size(0,r.height/2), Size(r.width, r.height));
+                                             Size(0,r_eyes.height/2), Size(r_eyes.width, r_eyes.height));
             for ( auto &i : righteyes ) {
-                rectangle(roi, i, Scalar( 0,  225, 255 ));
+                rectangle(roi_eyes, i, Scalar( 0,  225, 255 ));
             }
             for ( auto &i : noses ) {
-                rectangle(roi, i, Scalar( 255,  225, 255 ));
+                rectangle(roi_nose, i, Scalar( 255,  225, 255 ));
             }
             for ( auto &i : lefteyes ) {
-                rectangle(roi, i, Scalar( 255,  225, 0));
+                rectangle(roi_eyes, i, Scalar( 255,  225, 0));
             }
-            rectangle(frame, r, Scalar(255,0,0));
+            rectangle(frame, r_eyes, Scalar(255,0,0));
+            rectangle(frame, r_nose, Scalar(155,0,0));
             rectangle(frame, faces[0], Scalar(0,0,255));
            
         }
