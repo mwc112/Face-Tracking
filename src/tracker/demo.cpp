@@ -9,7 +9,7 @@
 using namespace cv;
 using namespace std;
 
-//#define DISPLAY
+#define DISPLAY
 
 Rect estimateNoseRegion(Rect face_r) {
     Rect nose_r = face_r;
@@ -48,14 +48,10 @@ int main(int argc, char* argv[])
     auto startTime = time(0);
     auto frameCount = 0.0;
     auto rightEyesSuccess = 0, leftEyesSuccess = 0, noseSuccess = 0;
-    Mat frame;
-    bool frameRead = cap.read(frame); // read a new frame from video
     
+    Mat frame;
     vector<Rect> faces;
-    face_cascade.detectMultiScale(frame, faces,
-                                   1.1, 3, CASCADE_SCALE_IMAGE);
-                                      
-    Mat head = frame(faces[0]);
+    Mat head = frame;
     
     while (cap.read(frame))
     {
@@ -113,7 +109,9 @@ int main(int argc, char* argv[])
         	//If we lose the face, recalculate from scratch
         	face_cascade.detectMultiScale(frame, faces,
                                    1.1, 3, CASCADE_SCALE_IMAGE);
-            head = frame(faces[0]);                        
+            if (faces.size()) {
+                head = frame(faces[0]);
+            }
         }
 #ifdef DISPLAY
         imshow("Demo", frame);
