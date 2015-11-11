@@ -8,6 +8,19 @@
 
 using namespace cv;
 using namespace std;
+Rect estimateNoseRegion(Rect face_r) {
+    Rect nose_r = face_r;
+    nose_r.y += 2*nose_r.height/9;
+    nose_r.height = nose_r.height/2;
+    return nose_r;
+}
+
+Rect estimateEyesRegion(Rect face_r) {
+    Rect eyes_r = face_r;
+    eyes_r.y += 2*eyes_r.height/9;
+    eyes_r.height = eyes_r.height/3;
+    return eyes_r;
+}
 
 int main(int argc, char* argv[])
 {
@@ -39,46 +52,46 @@ int main(int argc, char* argv[])
                                       
     Mat head = frame(faces[0]);
     
-    while (true)
+    while (cap.read(frame))
     {
 
-        bool frameRead = cap.read(frame);
-        if (!frameRead) {
-            break;
-        }
         frameCount++;
         if (faces.size() >= 1) {
         	
         	face_cascade.detectMultiScale(head, faces,
                                    1.1, 3, CASCADE_SCALE_IMAGE);
         	
-            Rect r = faces[0];
-            r.y += 2*r.height/9;
-            r.height = r.height/2;
+            Rect eyesRegion = estimateEyesRegion(faces[0]);
+            Rect noseRegion = estimateNoseRegion(faces[0]);
+            
+            //Eyes works better when looking at the whole head,
+            //but with the size constraint of the eyeRegion.
+            Mat eyesROI = head;
+            Mat noseROI = head(noseRegion);
             
             //detection
             vector<Rect> noses, righteyes, lefteyes;
-            nose_cascade.detectMultiScale(head, noses,
+            nose_cascade.detectMultiScale(noseROI, noses,
                                          1.1, 3, CASCADE_SCALE_IMAGE,
-                                              Size(0,r.height/2), r.size());
-            righteye_cascade.detectMultiScale(head, righteyes,
+                                              Size(0,noseRegion.height/2), noseRegion.size());
+            righteye_cascade.detectMultiScale(eyesROI, righteyes,
                                          1.1, 3, CASCADE_SCALE_IMAGE,
-                                              Size(0,r.height/2), r.size());
-            lefteye_cascade.detectMultiScale(head, lefteyes,
+                                              Size(0,eyesRegion.height/2), eyesRegion.size());
+            lefteye_cascade.detectMultiScale(eyesROI, lefteyes,
                                          1.1, 3, CASCADE_SCALE_IMAGE,
-                                             Size(0,r.height/2), r.size());
+                                             Size(0,eyesRegion.height/2), eyesRegion.size());
             
             //display
             for ( auto &i : righteyes ) {
-                rectangle(head, i, Scalar(0, 225, 255));
+                rectangle(eyesROI, i, Scalar(0, 225, 255));
             } 
             for ( auto &i : noses ) {
-                rectangle(head, i, Scalar(255, 225, 255));
+                rectangle(noseROI, i, Scalar(255, 225, 255));
             } 
             for ( auto &i : lefteyes ) {
-                rectangle(head, i, Scalar(255, 225, 0));
+                rectangle(eyesROI, i, Scalar(255, 225, 0));
             }
-            rectangle(head, r, Scalar(255, 0, 0));
+            rectangle(head, eyesRegion, Scalar(255, 0, 0));
             rectangle(head, faces[0], Scalar(0, 0, 255));
             
             //metrics
@@ -94,10 +107,7 @@ int main(int argc, char* argv[])
         }  else {
         	//If we lose the face, recalculate from scratch
         	face_cascade.detectMultiScale(frame, faces,
-                                   1.1, 3, 0
-                                   //|CASCADE_FIND_BIGGEST_OBJECT
-                                   //|CASCADE_DO_ROUGH_SEARCH
-                                      |CASCADE_SCALE_IMAGE);
+                                   1.1, 3, CASCADE_SCALE_IMAGE);
             head = frame(faces[0]);                        
         }
         
