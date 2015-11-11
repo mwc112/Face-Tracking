@@ -8,6 +8,9 @@
 
 using namespace cv;
 using namespace std;
+
+//#define DISPLAY
+
 Rect estimateNoseRegion(Rect face_r) {
     Rect nose_r = face_r;
     nose_r.y += 2*nose_r.height/9;
@@ -38,8 +41,10 @@ int main(int argc, char* argv[])
     righteye_cascade.load("./haarcascade_righteye_2splits.xml");
     nose_cascade.load("./haarcascade_mcs_nose.xml");
 
-    
+#ifdef DISPLAY
     namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
+#endif
+    
     auto startTime = time(0);
     auto frameCount = 0.0;
     auto rightEyesSuccess = 0, leftEyesSuccess = 0, noseSuccess = 0;
@@ -80,7 +85,7 @@ int main(int argc, char* argv[])
             lefteye_cascade.detectMultiScale(eyesROI, lefteyes,
                                          1.1, 3, CASCADE_SCALE_IMAGE,
                                              Size(0,eyesRegion.height/2), eyesRegion.size());
-            
+#ifdef DISPLAY
             //display
             for ( auto &i : righteyes ) {
                 rectangle(eyesROI, i, Scalar(0, 225, 255));
@@ -93,7 +98,7 @@ int main(int argc, char* argv[])
             }
             rectangle(head, eyesRegion, Scalar(255, 0, 0));
             rectangle(head, faces[0], Scalar(0, 0, 255));
-            
+#endif
             //metrics
             if (righteyes.size() > 0) {
                 rightEyesSuccess++;
@@ -110,7 +115,7 @@ int main(int argc, char* argv[])
                                    1.1, 3, CASCADE_SCALE_IMAGE);
             head = frame(faces[0]);                        
         }
-        
+#ifdef DISPLAY
         imshow("Demo", frame);
         
         if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. Done like this on advice that HighGui requires regular calls to waitKey...
@@ -118,6 +123,7 @@ int main(int argc, char* argv[])
             cout << "Terminated by Esc key" << endl;
             break;
         }
+#endif
     }
     cout << "LeftEyes " << leftEyesSuccess/frameCount << endl;
     cout << "RightEyes " << rightEyesSuccess/frameCount << endl;
