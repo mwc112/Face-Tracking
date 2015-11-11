@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    VideoCapture cap(0); // open camera 0
+    VideoCapture cap("./face_test.mov"); // open camera 0
 
     if (!cap.isOpened())  // exit if can't open
     {
@@ -30,9 +30,9 @@ int main(int argc, char* argv[])
 
     
     namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
-    auto start_time = time(0);
-    auto frameCount = 0;
-    
+    auto startTime = time(0);
+    auto frameCount = 0.0;
+    auto rightEyesSuccess = 0, leftEyesSuccess = 0, noseSuccess = 0;
     Mat frame; //images use the Mat type from openCV
     bool frameRead = cap.read(frame); // read a new frame from video
     
@@ -48,19 +48,11 @@ int main(int argc, char* argv[])
     while (true)
     {
         frameCount++;
-        if (time(0) - start_time >= 1) {
-            start_time = time(0);
-            cout << "FPS:" <<  frameCount << endl;
-            frameCount = 0;
-        }
 
         bool frameRead = cap.read(frame); // read a new frame from video
-        
-       /* face_cascade.detectMultiScale(frame, faces,
-                                   1.1, 3, 0
-                                   //|CASCADE_FIND_BIGGEST_OBJECT
-                                   //|CASCADE_DO_ROUGH_SEARCH
-                                      |CASCADE_SCALE_IMAGE);*/
+        if (!frameRead) {
+            break;
+        }
         
         if (faces.size() >= 1) {
         	
@@ -106,7 +98,17 @@ int main(int argc, char* argv[])
             }
             rectangle(head, r, Scalar(255,0,0));
             rectangle(head, faces[0], Scalar(0,0,255));
-                       
+            
+            
+            if (righteyes.size() > 0) {
+                rightEyesSuccess++;
+            }
+            if (lefteyes.size() > 0) {
+                leftEyesSuccess++;
+            }
+            if (noses.size() > 0) {
+                noseSuccess++;
+            }
         }  else {
         	//If we lose the face, recalculate from scratch
         	face_cascade.detectMultiScale(frame, faces,
@@ -150,5 +152,9 @@ int main(int argc, char* argv[])
             break;
         }
     }
+    cout << "LeftEyes " << leftEyesSuccess/frameCount << endl;
+    cout << "RightEyes " << rightEyesSuccess/frameCount << endl;
+    cout << "Nose " << noseSuccess/frameCount << endl;
+    cout << "Time " << time(0) - startTime << endl;
     return 0;
 }
