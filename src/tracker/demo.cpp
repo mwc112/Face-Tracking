@@ -27,7 +27,7 @@ Rect estimateEyesRegion(Rect faceRect) {
 
 int main(int argc, char* argv[])
 {
-    VideoCapture cap("./face_test.mov");
+    VideoCapture cap(0);
 
     if (!cap.isOpened())  // exit if can't open
     {
@@ -57,11 +57,11 @@ int main(int argc, char* argv[])
     {
 
         frameCount++;
-        if (faces.size() >= 1) {
-        	
-        	faceCascade.detectMultiScale(head, faces,
-                                   1.1, 3, CASCADE_SCALE_IMAGE);
 
+        faceCascade.detectMultiScale(head, faces,
+                                     1.1, 3, CASCADE_SCALE_IMAGE);
+        if (faces.size() >= 1) {
+            
             Rect eyesRegion = estimateEyesRegion(faces[0]);
             Rect noseRegion = estimateNoseRegion(faces[0]);
             
