@@ -11,11 +11,13 @@ struct Face {
              rightEye,
              nose;
 };
+
+
 class FeatureTracker {
 public:
     FeatureTracker(int inputDevice);
     FeatureTracker(std::string inputFile);
-    void (*faceChanged)(Face face);
+    std::function<void(Face)> faceChanged;
     void start();
 private:
     cv::VideoCapture cap;

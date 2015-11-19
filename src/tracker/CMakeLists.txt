@@ -4,7 +4,7 @@ project( Demo )
 include_directories( /usr/local/include/ )
 find_package( OpenCV REQUIRED )
 
-add_library(Tracker FeatureTracker.h FeatureTracker.cpp)
+add_library(Tracker FeatureTracker.h FeatureTracker.cpp HeadTracker.h HeadTracker.cpp)
 target_link_libraries(Tracker ${OpenCV_LIBS})
 
 add_executable( Demo demo.cpp)
