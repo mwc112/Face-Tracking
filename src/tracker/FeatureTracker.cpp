@@ -82,10 +82,10 @@ void selectNose(vector <Rect> noses, Rect &nose) {
 }
 void FeatureTracker::start() {
     CascadeClassifier faceCascade, lefteyeCascade, righteyeCascade, noseCascade, earCascade;
-    faceCascade.load("./haarcascade_frontalface_alt.xml");
-    lefteyeCascade.load("./haarcascade_lefteye_2splits.xml");
-    righteyeCascade.load("./haarcascade_righteye_2splits.xml");
-    noseCascade.load("./haarcascade_mcs_nose.xml");
+    faceCascade.load("cascades/haarcascade_frontalface_alt.xml");
+    lefteyeCascade.load("cascades/haarcascade_lefteye_2splits.xml");
+    righteyeCascade.load("cascades/haarcascade_righteye_2splits.xml");
+    noseCascade.load("cascades/haarcascade_mcs_nose.xml");
     
 #ifdef DISPLAY
     namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
