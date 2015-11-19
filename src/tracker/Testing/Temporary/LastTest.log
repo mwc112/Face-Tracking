@@ -1,0 +1,19 @@
+Start testing: Nov 19 15:53 GMT
+----------------------------------------------------------
+1/1 Testing: runUnitTests
+1/1 Test: runUnitTests
+Command: "/Users/jonathan/EyeTrackWM/src/tracker/runUnitTests"
+Directory: /Users/jonathan/EyeTrackWM/src/tracker
+"runUnitTests" start time: Nov 19 15:53 GMT
+Output:
+----------------------------------------------------------
+2015-11-19 15:53:43.827 runUnitTests[79549:1934973] <Afloat - DEBUG: '-[Afloat install]'>: <Afloat: 0x7f9f8b5b7600> found no Window menu in NSApp <NSApplication: 0x7f9f8b71e590>
+<end of output>
+Test time =   2.70 sec
+----------------------------------------------------------
+Test Failed.
+"runUnitTests" end time: Nov 19 15:53 GMT
+"runUnitTests" time elapsed: 00:00:02
+----------------------------------------------------------
+
+End testing: Nov 19 15:53 GMT
