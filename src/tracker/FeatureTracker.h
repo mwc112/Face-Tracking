@@ -6,17 +6,16 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include <stdio.h>
 
-enum Direction {
-    Left,
-    Middle,
-    Right,
-    Unknown
+struct Face {
+    cv::Rect leftEye,
+             rightEye,
+             nose;
 };
 class FeatureTracker {
 public:
     FeatureTracker(int inputDevice);
     FeatureTracker(std::string inputFile);
-    void (*headDirectionChanged)(Direction headDirection);
+    void (*faceChanged)(Face face);
     void start();
 private:
     cv::VideoCapture cap;

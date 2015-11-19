@@ -1,0 +1,18 @@
+Start testing: Nov 19 15:01 GMT
+----------------------------------------------------------
+1/1 Testing: runUnitTests
+1/1 Test: runUnitTests
+Command: "/Users/jonathan/EyeTrackWM/src/tracker/runUnitTests"
+Directory: /Users/jonathan/EyeTrackWM/src/tracker
+"runUnitTests" start time: Nov 19 15:01 GMT
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   2.42 sec
+----------------------------------------------------------
+Test Failed.
+"runUnitTests" end time: Nov 19 15:02 GMT
+"runUnitTests" time elapsed: 00:00:02
+----------------------------------------------------------
+
+End testing: Nov 19 15:02 GMT
