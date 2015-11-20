@@ -60,4 +60,5 @@ void set_focus_to(Display* d, int x, int y){
 
 	XWarpPointer(d, None, None, 0, 0, 0, 0, move_x, move_y);
 	XFlush(d);
+	XSetInputFocus(d, PointerRoot, RevertToNone, CurrentTime);
 }
