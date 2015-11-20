@@ -3,4 +3,5 @@
 Status get_root_windows(Display*, Window**, int*);
 Status get_windows_attr(Display*, Window*, int, XWindowAttributes*); 
 void print_attr(Display*, Window*, XWindowAttributes*, int); 
+void set_focus_to(Display*, int, int);
 #endif
