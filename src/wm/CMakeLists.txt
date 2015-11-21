@@ -3,7 +3,7 @@ SET(CMAKE_C_FLAGS "-std=c99")
 project( Demo )
 include_directories( /usr/local/include/ )
 
-add_library(WM main.c main.h)
+add_library(WM wm.c wm.h)
 
 add_subdirectory(lib/googletest/googletest)
 enable_testing()
