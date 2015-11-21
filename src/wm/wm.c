@@ -31,24 +31,8 @@ void print_attr(Display* d, Window *children_windows, XWindowAttributes *attrs,
 }
 
 void set_focus_to(Display* d, int x, int y){
-	bool got_pointer = false;
-	Window *c_wins;
-	int num_child;
-	Window r_win, c_win;
-	int root_x, root_y, win_x, win_y;
-	unsigned int mask;
-
-	get_root_windows(d, &c_wins, &num_child);
-	
-	for(int i = 0; i < num_child; i++){
-		got_pointer = XQueryPointer(d, c_wins[i], &r_win, &c_win, 
-																				&root_x, &root_y, &win_x, &win_y,
-																				&mask);
-		if(got_pointer){
-			printf("Got pointer\n");
-			break;
-		}
-	}
+	int root_x, root_y;
+	get_pointer_location(d, &root_x, &root_y);
 
 	int move_x = x - root_x;
 	int move_y = y - root_y;
@@ -57,4 +41,25 @@ void set_focus_to(Display* d, int x, int y){
 	XWarpPointer(d, None, None, 0, 0, 0, 0, move_x, move_y);
 	XFlush(d);
 	XSetInputFocus(d, PointerRoot, RevertToNone, CurrentTime);
+}
+
+void get_pointer_location(Display *d, int *x_ret, int *y_ret){
+	bool got_pointer = false;
+  Window *c_wins;
+  int num_child;
+  Window r_win, c_win;
+  int win_x, win_y;
+  unsigned int mask;
+
+  get_root_windows(d, &c_wins, &num_child);
+
+  for(int i = 0; i < num_child; i++){
+    got_pointer = XQueryPointer(d, c_wins[i], &r_win, &c_win,
+                                        x_ret, y_ret, &win_x, &win_y,
+                                        &mask);
+    if(got_pointer){
+      printf("Got pointer\n");
+      break;
+    }
+  }
 }

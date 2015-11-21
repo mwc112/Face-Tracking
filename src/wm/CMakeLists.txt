@@ -9,6 +9,6 @@ add_subdirectory(lib/googletest/googletest)
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_executable(runUnitTests tests/tests.cpp)
-target_link_libraries(runUnitTests gtest gtest_main WM)
+target_link_libraries(runUnitTests gtest gtest_main WM X11)
 add_test(runUnitTests runUnitTests)
 
