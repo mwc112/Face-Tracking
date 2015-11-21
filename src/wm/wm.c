@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <X11/Xlib.h>
 #include "wm.h"
 
 Status get_root_windows(Display *d, Window **children_windows_ret,
