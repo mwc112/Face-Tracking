@@ -36,7 +36,6 @@ void set_focus_to(Display* d, int x, int y){
 
 	int move_x = x - root_x;
 	int move_y = y - root_y;
-	printf("%i  %i\n", move_x, move_y);
 
 	XWarpPointer(d, None, None, 0, 0, 0, 0, move_x, move_y);
 	XFlush(d);
@@ -57,9 +56,5 @@ void get_pointer_location(Display *d, int *x_ret, int *y_ret){
     got_pointer = XQueryPointer(d, c_wins[i], &r_win, &c_win,
                                         x_ret, y_ret, &win_x, &win_y,
                                         &mask);
-    if(got_pointer){
-      printf("Got pointer\n");
-      break;
-    }
   }
 }
