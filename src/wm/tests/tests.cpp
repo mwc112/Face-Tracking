@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
 	return RUN_ALL_TESTS();
 }
 
-TEST(window_manager, changes_focus){
+TEST(window_manager, changes_pointer){
 	Display *d = XOpenDisplay(NULL);
 	int set_x = 100;
 	int set_y = 100;
