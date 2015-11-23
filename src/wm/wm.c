@@ -25,11 +25,12 @@ void print_attr(Display* d, Window *children_windows, XWindowAttributes *attrs,
 
   for(int i = 0; i < num_children; i++){
     XFetchName(d, children_windows[i], &name);
-    printf("Name: %s\nx: %i  y: %ze: %i, %i\n\n", name, attrs[i].x,
+    printf("Name: %s\nx: %i  y: %i  size: %i, %i\n\n", name, attrs[i].x,
                                    attrs[i].y, attrs[i].width, attrs[i].height);
   }
 }
 
+/* BROKEN
 void set_focus_to(Display* d, int x, int y){
 	int root_x, root_y;
 	get_pointer_location(d, &root_x, &root_y);
@@ -40,7 +41,7 @@ void set_focus_to(Display* d, int x, int y){
 	XWarpPointer(d, None, None, 0, 0, 0, 0, move_x, move_y);
 	XFlush(d);
 	XSetInputFocus(d, PointerRoot, RevertToNone, CurrentTime);
-}
+} */
 
 void get_pointer_location(Display *d, int *x_ret, int *y_ret){
 	bool got_pointer = false;
@@ -57,4 +58,6 @@ void get_pointer_location(Display *d, int *x_ret, int *y_ret){
                                         x_ret, y_ret, &win_x, &win_y,
                                         &mask);
   }
+
+
 }
