@@ -11,4 +11,5 @@ Status get_windows_attr(Display*, Window*, int, XWindowAttributes*);
 void print_attr(Display*, Window*, XWindowAttributes*, int); 
 void set_focus_to(Display*, int, int);
 void get_pointer_location(Display*, int*, int*);
+void get_client_window_list(Display*, Window**, unsigned long*);
 #endif

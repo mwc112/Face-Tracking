@@ -58,6 +58,35 @@ void get_pointer_location(Display *d, int *x_ret, int *y_ret){
                                         x_ret, y_ret, &win_x, &win_y,
                                         &mask);
   }
+}
 
+void get_client_window_list(Display* d, Window **windows, unsigned long* length){
+	Atom a = XInternAtom(d, "_NET_CLIENT_LIST" , true);
+  Atom actualType;
+  int format;
+  unsigned long bytesAfter;
+  unsigned char *data;
+  int status = XGetWindowProperty(d,
+                XDefaultRootWindow(d),
+                a,
+                0L,
+                (~0L),
+                false,
+                AnyPropertyType,
+                &actualType,
+                &format,
+                length,
+                &bytesAfter,
+                &data);
 
+  long* array;
+	*windows = malloc(*length * sizeof(Window));
+  if (status >= Success && *length)
+  {
+     array = (long*)data;
+     for (int k = 0; k < *length; k++)
+     {
+        (*windows)[k] = (Window) array[k];
+     }
+  }
 }
