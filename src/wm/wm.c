@@ -75,7 +75,7 @@ void get_pointer_location(Display *d, int *x_ret, int *y_ret){
   return oddNodes;
 }*/
 
-void get_client_window_list(Display* d, Window **windows, unsigned long* length){
+void get_client_window_list(Display* d, long **windows, unsigned long* length){
 	Atom a = XInternAtom(d, "_NET_CLIENT_LIST" , true);
   Atom actualType;
   int format;
@@ -95,13 +95,28 @@ void get_client_window_list(Display* d, Window **windows, unsigned long* length)
                 &data);
 
   long* array;
-	*windows = malloc(*length * sizeof(Window));
+	int x, y;
+	unsigned int width, height, border_width, depth;
+	Window root;
+
+	*windows = malloc(*length * sizeof(long) * 5);
   if (status >= Success && *length)
   {
      array = (long*)data;
      for (int k = 0; k < *length; k++)
      {
-        (*windows)[k] = (Window) array[k];
+				XGetGeometry(d, (Window)array[k], &root, &x, &y, &width, &height, &border_width, &depth);
+
+        (*windows)[k*5] = array[k];
+				(*windows)[(k*5)+1] = (long)x;
+				(*windows)[(k*5)+2] = (long)(x + width);
+				(*windows)[(k*5)+3] = (long)y;
+				(*windows)[(k*5)+4] = (long)(y + height);
      }
   }
 }
+
+
+
+
+
