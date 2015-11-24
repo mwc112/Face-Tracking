@@ -1,0 +1,2 @@
+/usr/bin/ar cr libTracker.a  CMakeFiles/Tracker.dir/FeatureTracker.cpp.o CMakeFiles/Tracker.dir/HeadTracker.cpp.o
+/usr/bin/ranlib libTracker.a

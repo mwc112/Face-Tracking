@@ -1,0 +1,46 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/homes/sx813/EyeTrackWM/src/tracker/FeatureTracker.cpp
+FeatureTracker.h
+/homes/sx813/EyeTrackWM/src/tracker/FeatureTracker.h
+iostream
+-
+stdio.h
+-
+time.h
+-
+
+/homes/sx813/EyeTrackWM/src/tracker/FeatureTracker.h
+opencv2/objdetect/objdetect.hpp
+/homes/sx813/EyeTrackWM/src/tracker/opencv2/objdetect/objdetect.hpp
+opencv2/highgui/highgui.hpp
+/homes/sx813/EyeTrackWM/src/tracker/opencv2/highgui/highgui.hpp
+opencv2/imgproc/imgproc.hpp
+/homes/sx813/EyeTrackWM/src/tracker/opencv2/imgproc/imgproc.hpp
+stdio.h
+-
+
+/homes/sx813/EyeTrackWM/src/tracker/HeadTracker.cpp
+HeadTracker.h
+/homes/sx813/EyeTrackWM/src/tracker/HeadTracker.h
+opencv2/highgui/highgui.hpp
+/homes/sx813/EyeTrackWM/src/tracker/opencv2/highgui/highgui.hpp
+iostream
+-
+
+/homes/sx813/EyeTrackWM/src/tracker/HeadTracker.h
+string
+-
+functional
+-
+stdio.h
+-
+FeatureTracker.h
+/homes/sx813/EyeTrackWM/src/tracker/FeatureTracker.h
+
