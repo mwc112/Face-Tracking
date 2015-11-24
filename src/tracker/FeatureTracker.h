@@ -13,13 +13,20 @@ struct Face {
              nose;
 };
 
+enum Features {
+    Eyes,
+    Nose
+};
 
 class FeatureTracker {
 public:
     FeatureTracker(Input &input);
-    std::function<void(Face)> faceChanged;
-    void start();
+    Face getFeatures(Features features);
 private:
+    cv::CascadeClassifier faceCascade, lefteyeCascade, righteyeCascade, noseCascade, earCascade;
     Input &input;
+    cv::Mat head;
+    cv::Mat frame;
+    
 };
 #endif

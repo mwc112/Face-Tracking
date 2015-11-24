@@ -19,12 +19,10 @@ int main(int argc, char* argv[])
     FeatureTracker featureTracker(ci);
     HeadTracker headTracker;
     
-    featureTracker.faceChanged = bind(&HeadTracker::inputFace, &headTracker, _1);
     headTracker.directionChanged = [&](Direction dir) {
         cout << headTracker.directionString(dir) << endl;
     };
     
-    featureTracker.start();
     while(1){};
     return 0;
 }

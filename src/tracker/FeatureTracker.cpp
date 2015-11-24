@@ -8,7 +8,6 @@
 using namespace cv;
 using namespace std;
 
-FeatureTracker::FeatureTracker(Input &input) : input(input) {}
 
 Rect estimateNoseRegion(Rect faceRect) {
     Rect noseRect = faceRect;
@@ -75,109 +74,62 @@ void selectNose(vector <Rect> noses, Rect &nose) {
         nose = noses[0];
     }
 }
-void FeatureTracker::start() {
-    CascadeClassifier faceCascade, lefteyeCascade, righteyeCascade, noseCascade, earCascade;
+
+FeatureTracker::FeatureTracker(Input &input) : input(input) {
     faceCascade.load("cascades/haarcascade_frontalface_alt.xml");
     lefteyeCascade.load("cascades/haarcascade_lefteye_2splits.xml");
     righteyeCascade.load("cascades/haarcascade_righteye_2splits.xml");
     noseCascade.load("cascades/haarcascade_mcs_nose.xml");
+    head = frame;
     
-#ifdef DISPLAY
-    namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
-#endif
-    
-    auto startTime = time(0);
-    auto frameCount = 0.0;
-    auto rightEyesSuccess = 0, leftEyesSuccess = 0, noseSuccess = 0;
-    
-    Mat frame;
+}
+
+Face FeatureTracker::getFeatures(Features features) {
     vector<Rect> faces;
-    Mat head = frame;
-    
-    
-    while (true)
-    {
-        try {
-            frame = input.getFrame();
-        } catch (...) {
-            cout << "Dropped frame" << endl;
-            continue;
-        }
-//        equalizeFrame(frame);
-        frameCount++;
+    frame = input.getFrame();
         
-        faceCascade.detectMultiScale(head, faces,
+    faceCascade.detectMultiScale(head, faces,
+                                 1.1, 3, CASCADE_SCALE_IMAGE);
+    if (faces.size() >= 1) {
+        
+        Rect eyesRegion = estimateEyesRegion(faces[0]);
+        Rect noseRegion = estimateNoseRegion(faces[0]);
+        
+        //Eyes works better when looking at the whole head,
+        //but with the size constraint of the eyeRegion.
+        Mat eyesROI = head;
+        Mat noseROI = head(noseRegion);
+        
+        //exprimentally a lower minNeighbours gives a higher feature find rate, is the best.
+        auto minN = 1;
+        //detection
+        vector<Rect> noses, rightEyes, leftEyes;
+        noseCascade.detectMultiScale(noseROI, noses,
+                                     1.1, minN, 0,
+                                     Size(0,noseRegion.height/2), noseRegion.size());
+        righteyeCascade.detectMultiScale(eyesROI, rightEyes,
+                                         1.1, minN, CASCADE_SCALE_IMAGE,
+                                         Size(0,eyesRegion.height/2), eyesRegion.size());
+        lefteyeCascade.detectMultiScale(eyesROI, leftEyes,
+                                        1.1, minN, CASCADE_SCALE_IMAGE,
+                                        Size(0,eyesRegion.height/2), eyesRegion.size());
+        Face face;
+        splitEyes(leftEyes, rightEyes, head.size().width/2, face.leftEye, face.rightEye);
+        splitEyes(leftEyes, rightEyes, head.size().width/2, face.leftEye, face.rightEye);
+        selectNose(noses, face.nose);
+        face.nose += noseRegion.tl();
+        return face;
+        
+    }  else {
+        //If we lose the face, recalculate from scratch
+        faceCascade.detectMultiScale(frame, faces,
                                      1.1, 3, CASCADE_SCALE_IMAGE);
-        if (faces.size() >= 1) {
-            
-            Rect eyesRegion = estimateEyesRegion(faces[0]);
-            Rect noseRegion = estimateNoseRegion(faces[0]);
-            
-            //Eyes works better when looking at the whole head,
-            //but with the size constraint of the eyeRegion.
-            Mat eyesROI = head;
-            Mat noseROI = head(noseRegion);
-            
-            //exprimentally a lower minNeighbours gives a higher feature find rate, is the best.
-            auto minN = 1;
-            //detection
-            vector<Rect> noses, rightEyes, leftEyes;
-            noseCascade.detectMultiScale(noseROI, noses,
-                                         1.1, minN, 0,
-                                         Size(0,noseRegion.height/2), noseRegion.size());
-            righteyeCascade.detectMultiScale(eyesROI, rightEyes,
-                                             1.1, minN, CASCADE_SCALE_IMAGE,
-                                             Size(0,eyesRegion.height/2), eyesRegion.size());
-            lefteyeCascade.detectMultiScale(eyesROI, leftEyes,
-                                            1.1, minN, CASCADE_SCALE_IMAGE,
-                                            Size(0,eyesRegion.height/2), eyesRegion.size());
-            Face face;
-            splitEyes(leftEyes, rightEyes, head.size().width/2, face.leftEye, face.rightEye);
-            splitEyes(leftEyes, rightEyes, head.size().width/2, face.leftEye, face.rightEye);
-            selectNose(noses, face.nose);
-            face.nose += noseRegion.tl();
-            //events
-            faceChanged(face);
-            
-#ifdef DISPLAY
-            //display
-            rectangle(eyesROI, face.rightEye, Scalar(0, 225, 255));
-            rectangle(eyesROI, face.nose, Scalar(255, 225, 255));
-            rectangle(eyesROI, face.leftEye, Scalar(255, 225, 0));
-            rectangle(head, eyesRegion, Scalar(255, 0, 0));
-            rectangle(head, faces[0], Scalar(0, 0, 255));
-#endif
-            //metrics
-            if (face.rightEye != Rect()) {
-                rightEyesSuccess++;
-            }
-            if (face.leftEye != Rect()) {
-                leftEyesSuccess++;
-            }
-            
-            if (face.nose != Rect()) {
-                noseSuccess++;
-            }
-        }  else {
-            //If we lose the face, recalculate from scratch
-            faceCascade.detectMultiScale(frame, faces,
-                                         1.1, 3, CASCADE_SCALE_IMAGE);
-            if (faces.size()) {
-                head = frame(faces[0]);
-            }
+        if (faces.size()) {
+            head = frame(faces[0]);
         }
-#ifdef DISPLAY
-        imshow("Demo", frame);
-        
-        if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. Done like this on advice that HighGui requires regular calls to waitKey...
-        {
-            cout << "Terminated by Esc key" << endl;
-            break;
-        }
-#endif
+        //TODO throw sensible exception
+        throw 4;
     }
-    cout << "LeftEyes " << leftEyesSuccess/frameCount << endl;
-    cout << "RightEyes " << rightEyesSuccess/frameCount << endl;
-    cout << "Nose " << noseSuccess/frameCount << endl;
-    cout << "Time " << time(0) - startTime << endl;
+
+   
 }
