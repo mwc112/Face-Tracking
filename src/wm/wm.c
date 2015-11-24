@@ -30,8 +30,24 @@ void print_attr(Display* d, Window *children_windows, XWindowAttributes *attrs,
   }
 }
 
-/* BROKEN
+
 void set_focus_to(Display* d, int x, int y){
+
+	long *windows;
+	unsigned long length;
+
+	get_client_window_list(d, &windows, &length);
+
+	int i;
+	for(i = 1; i < length; i++){
+		bool in = pointInPolygon(windows+(i*5)+1, x, y);
+		if(in){
+			break;
+		}
+	}
+
+	printf("%i\n", i);
+
 	int root_x, root_y;
 	get_pointer_location(d, &root_x, &root_y);
 
@@ -40,8 +56,10 @@ void set_focus_to(Display* d, int x, int y){
 
 	XWarpPointer(d, None, None, 0, 0, 0, 0, move_x, move_y);
 	XFlush(d);
-	XSetInputFocus(d, PointerRoot, RevertToNone, CurrentTime);
-} */
+	
+	XSetInputFocus(d, windows[i*5], RevertToNone, CurrentTime);
+	XFlush(d);
+}
 
 void get_pointer_location(Display *d, int *x_ret, int *y_ret){
 	bool got_pointer = false;
@@ -92,9 +110,6 @@ void get_client_window_list(Display* d, long **windows, unsigned long* length){
                 &data);
 
   long* array;
-	int x, y;
-	unsigned int width, height, border_width, depth;
-	Window root;
 
 	*windows = malloc(*length * sizeof(long) * 5);
   if (status >= Success && *length)
@@ -102,13 +117,19 @@ void get_client_window_list(Display* d, long **windows, unsigned long* length){
      array = (long*)data;
      for (int k = 0; k < *length; k++)
      {
-				XGetGeometry(d, (Window)array[k], &root, &x, &y, &width, &height, &border_width, &depth);
+				Window root;
+				Window parent;
+				Window* children;
+				unsigned int nchildren;
+				XQueryTree(d, array[k], &root, &parent, &children, &nchildren);
+				XWindowAttributes attr;
+				XGetWindowAttributes(d, parent, &attr);
 
         (*windows)[k*5] = array[k];
-				(*windows)[(k*5)+1] = (long)x;
-				(*windows)[(k*5)+2] = (long)(x + width);
-				(*windows)[(k*5)+3] = (long)y;
-				(*windows)[(k*5)+4] = (long)(y+height);
+				(*windows)[(k*5)+1] = (long)attr.x;
+				(*windows)[(k*5)+2] = (long)(attr.x + attr.width);
+				(*windows)[(k*5)+3] = (long)attr.y;
+				(*windows)[(k*5)+4] = (long)(attr.y+attr.height);
      }
   }
 }
