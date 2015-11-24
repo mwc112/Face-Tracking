@@ -50,9 +50,6 @@ void set_focus_to(Display* d, int x, int y){
 
 	get_client_window_list(d, &windows, &length);
 
-	for(int j = 0; j < length; j++){
-	}
-
 	int i;
 	for(i = 3; i < length; i++){
 		bool in = pointInPolygon(windows+(i*5)+1, x, y);
