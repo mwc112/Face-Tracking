@@ -1,2 +1,0 @@
-/usr/bin/ar cr libWM.a  CMakeFiles/WM.dir/wm.c.o
-/usr/bin/ranlib libWM.a
