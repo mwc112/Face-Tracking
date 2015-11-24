@@ -1,3 +1,0 @@
-runUnitTests 4 0
----
-runUnitTests

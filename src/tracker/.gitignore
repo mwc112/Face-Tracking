@@ -32,3 +32,10 @@ Demo
 *.cmake
 Makefile
 CMake*
+
+#temp
+runUnitTests
+/Testing/Temporary/*
+
+#googletest
+../lib/googletest/*
