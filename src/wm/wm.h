@@ -13,4 +13,13 @@ void set_focus_to(Display*, int, int);
 void get_pointer_location(Display*, int*, int*);
 void get_client_window_list(Display*, long**, unsigned long*);
 bool pointInPolygon(long *window, int x, int y);
+void set_focus_screen(int);
+
+enum Direction {
+    Left,
+    Middle,
+    Right,
+    Unknown
+};
+
 #endif

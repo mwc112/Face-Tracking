@@ -30,6 +30,18 @@ void print_attr(Display* d, Window *children_windows, XWindowAttributes *attrs,
   }
 }
 
+void set_focus_screen(int direction){
+	Display *d = XOpenDisplay(NULL);
+	if(direction == Left){
+		set_focus_to(d, 1920/2, 1080/2);
+	}
+	else if(direction == Middle){
+		set_focus_to(d, 1920 + 1920/2, 1080/2);
+	}
+	else if(direction == Right){
+		set_focus_to(d, 1920*2 + 1920/2, 1080/2);
+	}
+}
 
 void set_focus_to(Display* d, int x, int y){
 
@@ -38,8 +50,11 @@ void set_focus_to(Display* d, int x, int y){
 
 	get_client_window_list(d, &windows, &length);
 
+	for(int j = 0; j < length; j++){
+	}
+
 	int i;
-	for(i = 1; i < length; i++){
+	for(i = 3; i < length; i++){
 		bool in = pointInPolygon(windows+(i*5)+1, x, y);
 		if(in){
 			break;
@@ -87,6 +102,7 @@ bool pointInPolygon(long* window, int x, int y) {
 
   return in;
 }
+
 
 void get_client_window_list(Display* d, long **windows, unsigned long* length){
 	Atom a = XInternAtom(d, "_NET_CLIENT_LIST" , true);
