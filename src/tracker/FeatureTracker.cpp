@@ -8,12 +8,7 @@
 using namespace cv;
 using namespace std;
 
-FeatureTracker::FeatureTracker(int inputDevice) {
-    cap = VideoCapture(inputDevice);
-}
-FeatureTracker::FeatureTracker(string inputFile) {
-    cap = VideoCapture(inputFile);
-}
+FeatureTracker::FeatureTracker(Input &input) : input(input) {}
 
 Rect estimateNoseRegion(Rect faceRect) {
     Rect noseRect = faceRect;
@@ -99,8 +94,15 @@ void FeatureTracker::start() {
     vector<Rect> faces;
     Mat head = frame;
     
-    while (cap.read(frame))
+    
+    while (true)
     {
+        try {
+            frame = input.getFrame();
+        } catch (...) {
+            cout << "Dropped frame" << endl;
+            continue;
+        }
 //        equalizeFrame(frame);
         frameCount++;
         

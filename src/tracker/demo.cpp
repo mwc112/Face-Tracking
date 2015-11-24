@@ -3,6 +3,7 @@
 #include <time.h>
 #include "FeatureTracker.h"
 #include "HeadTracker.h"
+#include "CameraInput.h"
 
 
 using namespace std;
@@ -13,7 +14,9 @@ void faceChanged(Face face);
 
 int main(int argc, char* argv[])
 {
-    FeatureTracker featureTracker("face_test2.mov");
+    
+    CameraInput ci;
+    FeatureTracker featureTracker(ci);
     HeadTracker headTracker;
     
     featureTracker.faceChanged = bind(&HeadTracker::inputFace, &headTracker, _1);

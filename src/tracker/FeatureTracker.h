@@ -4,6 +4,7 @@
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
+#include "Input.h"
 #include <stdio.h>
 
 struct Face {
@@ -15,11 +16,10 @@ struct Face {
 
 class FeatureTracker {
 public:
-    FeatureTracker(int inputDevice);
-    FeatureTracker(std::string inputFile);
+    FeatureTracker(Input &input);
     std::function<void(Face)> faceChanged;
     void start();
 private:
-    cv::VideoCapture cap;
+    Input &input;
 };
 #endif
