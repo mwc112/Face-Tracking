@@ -1,7 +1,7 @@
 #include "wm.h"
 
-Status get_root_windows(Display *d, Window **children_windows_ret,
-                                         int *num_children_ret){
+Status wm::get_root_windows(Display *d, Window **children_windows_ret,
+                                         unsigned int *num_children_ret){
   Window root_window = XDefaultRootWindow(d);
   Window root, parent;
   if ((XQueryTree(d, root_window, &root, &parent,
@@ -10,7 +10,7 @@ Status get_root_windows(Display *d, Window **children_windows_ret,
   }
 }
 
-Status get_windows_attr(Display *d, Window *children_windows,
+Status wm::get_windows_attr(Display *d, Window *children_windows,
                            int num_children, XWindowAttributes *attrs_ret){
   for(int i = 0; i < num_children; i++){
     if(XGetWindowAttributes(d, children_windows[i], attrs_ret+i)==0){
@@ -19,7 +19,7 @@ Status get_windows_attr(Display *d, Window *children_windows,
   }
 }
 
-void print_attr(Display* d, Window *children_windows, XWindowAttributes *attrs,
+void wm::print_attr(Display* d, Window *children_windows, XWindowAttributes *attrs,
                                             int num_children){
   char* name;
 
@@ -30,7 +30,7 @@ void print_attr(Display* d, Window *children_windows, XWindowAttributes *attrs,
   }
 }
 
-void set_focus_screen(Direction direction){
+void wm::set_focus_screen(Direction direction){
 	Display *d = XOpenDisplay(NULL);
 	if(direction == Left){
 		set_focus_to(d, 1920/2, 1080/2);
@@ -43,7 +43,7 @@ void set_focus_screen(Direction direction){
 	}
 }
 
-void set_focus_to(Display* d, int x, int y){
+void wm::set_focus_to(Display* d, int x, int y){
 
 	long *windows;
 	unsigned long length;
@@ -71,10 +71,10 @@ void set_focus_to(Display* d, int x, int y){
 	XFlush(d);
 }
 
-void get_pointer_location(Display *d, int *x_ret, int *y_ret){
+void wm::get_pointer_location(Display *d, int *x_ret, int *y_ret){
 	bool got_pointer = false;
   Window *c_wins;
-  int num_child;
+  unsigned int num_child;
   Window r_win, c_win;
   int win_x, win_y;
   unsigned int mask;
@@ -88,7 +88,7 @@ void get_pointer_location(Display *d, int *x_ret, int *y_ret){
   }
 }
 
-bool pointInPolygon(long* window, int x, int y) {
+bool wm::pointInPolygon(long* window, int x, int y) {
 
 	bool in = false;
 
@@ -101,7 +101,7 @@ bool pointInPolygon(long* window, int x, int y) {
 }
 
 
-void get_client_window_list(Display* d, long **windows, unsigned long* length){
+void wm::get_client_window_list(Display* d, long **windows, unsigned long* length){
 	Atom a = XInternAtom(d, "_NET_CLIENT_LIST" , true);
   Atom actualType;
   int format;
@@ -122,7 +122,9 @@ void get_client_window_list(Display* d, long **windows, unsigned long* length){
 
   long* array;
 
-	*windows = malloc(*length * sizeof(long) * 5);
+	//*windows = malloc(*length * sizeof(long) * 5);
+
+	*windows = new long[5 * (*length)];
   if (status >= Success && *length)
   {
      array = (long*)data;
