@@ -46,7 +46,6 @@ void set_focus_to(Display* d, int x, int y){
 		}
 	}
 
-	printf("%i\n", i);
 
 	int root_x, root_y;
 	get_pointer_location(d, &root_x, &root_y);
@@ -55,7 +54,6 @@ void set_focus_to(Display* d, int x, int y){
 	int move_y = y - root_y;
 
 	XWarpPointer(d, None, None, 0, 0, 0, 0, move_x, move_y);
-	XFlush(d);
 	
 	XSetInputFocus(d, windows[i*5], RevertToNone, CurrentTime);
 	XFlush(d);
@@ -133,8 +131,4 @@ void get_client_window_list(Display* d, long **windows, unsigned long* length){
      }
   }
 }
-
-
-
-
 
