@@ -30,7 +30,7 @@ void print_attr(Display* d, Window *children_windows, XWindowAttributes *attrs,
   }
 }
 
-void set_focus_screen(int direction){
+void set_focus_screen(Direction direction){
 	Display *d = XOpenDisplay(NULL);
 	if(direction == Left){
 		set_focus_to(d, 1920/2, 1080/2);
