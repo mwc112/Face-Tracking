@@ -60,12 +60,12 @@ void get_pointer_location(Display *d, int *x_ret, int *y_ret){
   }
 }
 
-/*bool pointInPolygon() {
+/*bool pointInPolygon(long* windows, int x, int y) {
 
-  int   i, j=polyCorners-1 ;
-  bool  oddNodes=NO      ;
+  int i, j = 4;
+  bool oddNodes = false;
 
-  for (i=0; i<polyCorners; i++) {
+  for (i=0; i<4; i++) {
     if (polyY[i]<y && polyY[j]>=y
     ||  polyY[j]<y && polyY[i]>=y) {
       if (polyX[i]+(y-polyY[i])/(polyY[j]-polyY[i])*(polyX[j]-polyX[i])<x) {
@@ -99,7 +99,7 @@ void get_client_window_list(Display* d, long **windows, unsigned long* length){
 	unsigned int width, height, border_width, depth;
 	Window root;
 
-	*windows = malloc(*length * sizeof(long) * 5);
+	*windows = malloc(*length * sizeof(long) * 9);
   if (status >= Success && *length)
   {
      array = (long*)data;
@@ -110,8 +110,13 @@ void get_client_window_list(Display* d, long **windows, unsigned long* length){
         (*windows)[k*5] = array[k];
 				(*windows)[(k*5)+1] = (long)x;
 				(*windows)[(k*5)+2] = (long)(x + width);
-				(*windows)[(k*5)+3] = (long)y;
-				(*windows)[(k*5)+4] = (long)(y + height);
+				(*windows)[(k*5)+3] = (long)(x + width);
+				(*windows)[(k*5)+4] = (long)x;
+				(*windows)[(k*5)+5] = (long)y;
+				(*windows)[(k*5)+6] = (long)y;
+				(*windows)[(k*5)+7] = (long)(y + height);
+				(*windows)[(k*5)+8] = (long)(y + height);
+
      }
   }
 }
