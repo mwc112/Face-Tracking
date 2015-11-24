@@ -60,6 +60,21 @@ void get_pointer_location(Display *d, int *x_ret, int *y_ret){
   }
 }
 
+/*bool pointInPolygon() {
+
+  int   i, j=polyCorners-1 ;
+  bool  oddNodes=NO      ;
+
+  for (i=0; i<polyCorners; i++) {
+    if (polyY[i]<y && polyY[j]>=y
+    ||  polyY[j]<y && polyY[i]>=y) {
+      if (polyX[i]+(y-polyY[i])/(polyY[j]-polyY[i])*(polyX[j]-polyX[i])<x) {
+        oddNodes=!oddNodes; }}
+    j=i; }
+
+  return oddNodes;
+}*/
+
 void get_client_window_list(Display* d, Window **windows, unsigned long* length){
 	Atom a = XInternAtom(d, "_NET_CLIENT_LIST" , true);
   Atom actualType;
