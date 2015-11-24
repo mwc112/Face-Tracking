@@ -1,5 +1,6 @@
 #include "wm.h"
 
+
 Status wm::get_root_windows(Display *d, Window **children_windows_ret,
                                          unsigned int *num_children_ret){
   Window root_window = XDefaultRootWindow(d);
@@ -147,3 +148,8 @@ void wm::get_client_window_list(Display* d, long **windows, unsigned long* lengt
   }
 }
 
+void wm::save_pointer(Window w){
+	if(win_mouse.find(w) == win_mouse.end()){
+		return;
+	}
+}
