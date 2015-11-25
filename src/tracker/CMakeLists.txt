@@ -13,7 +13,7 @@ target_link_libraries(Tracker ${OpenCV_LIBS})
 add_executable( Demo demo.cpp)
 target_link_libraries( Demo Tracker )
 
-add_subdirectory(lib/googletest/googletest)
+add_subdirectory(../lib/googletest/googletest ../lib/googletest/googletest)
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_executable(runUnitTests tests.cpp)
