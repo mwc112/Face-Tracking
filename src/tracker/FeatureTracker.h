@@ -23,6 +23,7 @@ public:
     FeatureTracker(Input &input);
     Face getFeatures(Features features);
 private:
+    Face findFeaturesInFace(cv::Mat head, cv::Rect face);
     cv::CascadeClassifier faceCascade, lefteyeCascade, righteyeCascade, noseCascade, earCascade;
     Input &input;
     cv::Mat head;
