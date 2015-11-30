@@ -15,9 +15,10 @@ enum Direction {
 
 class HeadTracker {
 public:
-    std::function<void(Direction)> directionChanged;
-    void inputFace(Face);
-    std::string directionString(Direction);
+    HeadTracker(FeatureTracker ft);
+    Direction getDirection();
+private:
     Direction currentDirection;
+    FeatureTracker featureTracker;
 };
 #endif

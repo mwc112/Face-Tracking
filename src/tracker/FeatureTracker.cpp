@@ -78,7 +78,7 @@ Face FeatureTracker::getFeatures(Features features) {
         }
         //we throw an exception here because we don't have a face to return this frame.
         //TODO throw sensible exception
-        throw 4;
+        throw "feature";
     }
 }
 
