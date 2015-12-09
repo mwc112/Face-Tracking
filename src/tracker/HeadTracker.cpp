@@ -6,11 +6,7 @@
 using namespace cv;
 using namespace std;
 
-HeadTracker::HeadTracker(FeatureTracker ft) : featureTracker(ft) {
-}
-
-Direction HeadTracker::getDirection() {
-    Face face = featureTracker.getFeatures((Features)(Eyes | Nose));
+Direction HeadTracker::getDirection(Face face) {
     //    if (face.nose == Rect()) {
     //        return;
     //    }

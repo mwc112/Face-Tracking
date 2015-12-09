@@ -4,7 +4,7 @@
 #include <string>
 #include <functional>
 #include <stdio.h>
-#include "FeatureTracker.h"
+#include "Face.h"
 
 enum Direction {
     Left,
@@ -15,10 +15,8 @@ enum Direction {
 
 class HeadTracker {
 public:
-    HeadTracker(FeatureTracker ft);
-    Direction getDirection();
+    Direction getDirection(Face face);
 private:
     Direction currentDirection;
-    FeatureTracker featureTracker;
 };
 #endif

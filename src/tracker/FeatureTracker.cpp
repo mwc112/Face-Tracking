@@ -16,13 +16,11 @@ void splitEyes(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &
 void selectNose(vector <Rect> noses, Rect &nose);
 
 
-FeatureTracker::FeatureTracker(Input &input) : input(input) {
+FeatureTracker::FeatureTracker(Features features) : requiredFeatures(features) {
     faceCascade.load("cascades/haarcascade_frontalface_alt.xml");
     lefteyeCascade.load("cascades/haarcascade_lefteye_2splits.xml");
     righteyeCascade.load("cascades/haarcascade_righteye_2splits.xml");
     noseCascade.load("cascades/haarcascade_mcs_nose.xml");
-    head = frame;
-    
 }
 
 Face FeatureTracker::findFeaturesInFace(Mat head, Rect faceRect) {
@@ -47,19 +45,26 @@ Face FeatureTracker::findFeaturesInFace(Mat head, Rect faceRect) {
     lefteyeCascade.detectMultiScale(eyesROI, leftEyes,
                                     1.1, minN, CASCADE_SCALE_IMAGE,
                                     Size(0,eyesRegion.height/2), eyesRegion.size());
+    
+    Point offset;
+    Size wholesize;
+    
+    head.locateROI(wholesize, offset);
     Face face;
+    face.face = faceRect + offset;
     splitEyes(leftEyes, rightEyes, head.size().width/2, face.leftEye, face.rightEye);
     selectNose(noses, face.nose);
-    face.nose += noseRegion.tl();
+    face.nose += noseRegion.tl() + offset;
+    face.leftEye += offset;
+    face.rightEye += offset;
     return face;
 }
 
-Face FeatureTracker::getFeatures(Features features) {
+Face FeatureTracker::getFeatures(Mat frame) {
     vector<Rect> faces;
-    frame = input.getFrame();
     
-    //head will contain the new data in frame, because the actual data is not copied when
-    //assigning, =, or extracting a submatrix, ().
+    Mat head = frame(prevhead);
+    
     faceCascade.detectMultiScale(head, faces,
                                  1.1, 3, CASCADE_SCALE_IMAGE);
     if (faces.size() >= 1) {
@@ -69,7 +74,7 @@ Face FeatureTracker::getFeatures(Features features) {
         faceCascade.detectMultiScale(frame, faces,
                                      1.1, 3, CASCADE_SCALE_IMAGE);
         if (faces.size()) {
-            head = frame(faces[0]);
+            prevhead = faces[0];
             //TODO
             //turns out there actually is face in this frame, just not where we expected it
             //based on the location of the face in the previous frame.

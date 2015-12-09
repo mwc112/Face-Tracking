@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 SET(CMAKE_CXX_FLAGS "-std=c++0x")
-project( Demo )
+project( Tracker )
 include_directories( /usr/local/include/ )
 find_package( OpenCV REQUIRED )
 
@@ -8,10 +8,9 @@ find_package( OpenCV REQUIRED )
 file(GLOB Tracker_SRC "*.h" "*.cpp")
 
 add_library(Tracker ${Tracker_SRC})
-target_link_libraries(Tracker ${OpenCV_LIBS})
+target_include_directories(Tracker PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable( Demo demo.cpp)
-target_link_libraries( Demo Tracker )
+target_link_libraries(Tracker ${OpenCV_LIBS})
 
 add_subdirectory(../lib/googletest/googletest ../lib/googletest/googletest)
 enable_testing()
