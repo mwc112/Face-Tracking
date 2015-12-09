@@ -149,7 +149,7 @@ void wm::get_client_window_list(Display* d, long **windows, unsigned long* lengt
 }
 
 void wm::save_pointer(Window w){
-	if(win_mouse.find(w) == win_mouse.end()){
+	if(win_mouse->find(w) == win_mouse->end()){
 		return;
 	}
 }
