@@ -6,7 +6,7 @@
 using namespace cv;
 using namespace std;
 
-void HeadTracker::inputFace(Face face) {
+Direction HeadTracker::getDirection(Face face) {
     //    if (face.nose == Rect()) {
     //        return;
     //    }
@@ -27,23 +27,15 @@ void HeadTracker::inputFace(Face face) {
     } else if (!hasLeftEye && hasRightEye) {
         dir = Left;
     } else {
-        return;
+        //TODO throw something better
+        throw "head";
     }
     if (dir != currentDirection) {
-        directionChanged(dir);
         currentDirection = dir;
+        return dir;
+    } else {
+        //TODO throw something better
+        throw "head";
     }
 }
 
-std::string HeadTracker::directionString(Direction dir) {
-    switch (dir) {
-        case Left:
-            return "Left";
-        case Right:
-            return "Right";
-        case Middle:
-            return "Middle";
-        case Unknown:
-            return "Unknown";
-    }
-}

@@ -4,22 +4,23 @@
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
-#include "Input.h"
 #include <stdio.h>
+#include "Face.h"
 
-struct Face {
-    cv::Rect leftEye,
-             rightEye,
-             nose;
+
+enum Features {
+    Eyes,
+    Nose
 };
-
 
 class FeatureTracker {
 public:
-    FeatureTracker(Input &input);
-    std::function<void(Face)> faceChanged;
-    void start();
+    FeatureTracker(Features features);
+    Face getFeatures(cv::Mat frame);
 private:
-    Input &input;
+    Face findFeaturesInFace(cv::Mat head, cv::Rect face);
+    cv::CascadeClassifier faceCascade, lefteyeCascade, righteyeCascade, noseCascade, earCascade;
+    Features requiredFeatures;
+    cv::Rect prevhead;
 };
 #endif

@@ -11,7 +11,7 @@ Mat CameraInput::getFrame() {
         return mat;
     } else {
         //TODO Throw Exception
-        throw 5;
+        throw "camera";
     }
     
 }
