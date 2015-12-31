@@ -1,30 +1,19 @@
-Start testing: Nov 24 14:31 GMT
+Start testing: Dec 31 14:41 GMT
 ----------------------------------------------------------
+Unable to find executable: runUnitTests
 1/1 Testing: runUnitTests
 1/1 Test: runUnitTests
-Command: "/home/chris/EyeTrackWM/src/tracker/runUnitTests"
+Command: ""
 Directory: /home/chris/EyeTrackWM/src/tracker
-"runUnitTests" start time: Nov 24 14:31 GMT
+"runUnitTests" start time: 
 Output:
 ----------------------------------------------------------
-VIDIOC_QUERYMENU: Invalid argument
-VIDIOC_QUERYMENU: Invalid argument
-VIDIOC_QUERYMENU: Invalid argument
-VIDIOC_QUERYMENU: Invalid argument
-VIDIOC_QUERYMENU: Invalid argument
-VIDIOC_QUERYMENU: Invalid argument
-VIDIOC_QUERYMENU: Invalid argument
-Terminated by Esc key
-LeftEyes 0
-RightEyes 0
-Nose 0
-Time 5
 <end of output>
-Test time =   4.95 sec
+Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"runUnitTests" end time: Nov 24 14:31 GMT
-"runUnitTests" time elapsed: 00:00:04
+"runUnitTests" end time: Dec 31 14:41 GMT
+"runUnitTests" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Nov 24 14:31 GMT
+End testing: Dec 31 14:41 GMT

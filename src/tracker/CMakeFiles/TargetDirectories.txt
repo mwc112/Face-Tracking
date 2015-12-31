@@ -1,5 +1,0 @@
-/homes/sx813/EyeTrackWM/src/tracker/CMakeFiles/Demo.dir
-/homes/sx813/EyeTrackWM/src/tracker/CMakeFiles/Tracker.dir
-/homes/sx813/EyeTrackWM/src/tracker/lib/googletest/googletest/CMakeFiles/gtest.dir
-/homes/sx813/EyeTrackWM/src/tracker/lib/googletest/googletest/CMakeFiles/gtest_main.dir
-/homes/sx813/EyeTrackWM/src/tracker/CMakeFiles/runUnitTests.dir
