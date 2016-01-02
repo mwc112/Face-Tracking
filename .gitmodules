@@ -1,4 +1,4 @@
 [submodule "src/lib/googletest"]
 	path = src/lib/googletest
 	url = https://github.com/google/googletest.git
-        ignore = dirty
+	ignore = dirty
