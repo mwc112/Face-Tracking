@@ -32,21 +32,21 @@ Point centerOfRect(Rect rect) {
     }
     Size halfSize = Size(rect.size().width/2, rect.size().height/2);
     return Point(rect.tl().x + halfSize.width, rect.tl().y + halfSize.height);
-}opencv
+}
 
 void drawFaceOnFrame(Mat frame, Face face) {
     auto radius = 5;
-    try { circle(frame, centerOfRect(face.nose), radius, NOSE_COLOR, -1); } catch (...){}
-    try { circle(frame, centerOfRect(face.rightEye), radius, RIGHT_EYE_COLOR, -1); } catch (...){}
-    try { circle(frame, centerOfRect(face.leftEye), radius, LEFT_EYE_COLOR, -1); } catch (...){}
-    rectangle(frame, face.face, FACE_COLOR);
+    try { circle(frame, centerOfRect(face.nose), radius, WHITE_COLOR, -1); } catch (...){}
+    try { circle(frame, centerOfRect(face.rightEye), radius, CYAN_COLOR, -1); } catch (...){}
+    try { circle(frame, centerOfRect(face.leftEye), radius, YELLOW_COLOR, -1); } catch (...){}
+    rectangle(frame, face.face, RED_COLOR);
 }
 
 void drawFaceOnFrameRects(Mat frame, Face face) {
-    rectangle(frame, face.nose, NOSE_COLOR);
-    rectangle(frame, face.rightEye, RIGHT_EYE_COLOR);
-    rectangle(frame, face.leftEye, LEFT_EYE_COLOR);
-    rectangle(frame, face.face, FACE_COLOR);
+    rectangle(frame, face.nose, WHITE_COLOR);
+    rectangle(frame, face.rightEye, CYAN_COLOR);
+    rectangle(frame, face.leftEye, YELLOW_COLOR);
+    rectangle(frame, face.face, RED_COLOR);
 }
 
 
@@ -54,7 +54,6 @@ string faceDescription(Face face) {
     
 }
 
->>>>>>> 93f641425b71d95eba51af07c3a993949810c853
 int main(int argc, char* argv[])
 {
     
@@ -70,7 +69,7 @@ int main(int argc, char* argv[])
         try {
             frame = ci.getFrame();
             Face face = featureTracker.getFeatures(frame);
-            face.drawOnFrame(frame);
+            drawFaceOnFrame(frame, face);
             Direction dir = headTracker.getDirection(face);
             w_manager->set_focus_screen((wm::Direction)dir);
             cout << directionName(dir) << endl;
