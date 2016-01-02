@@ -5,7 +5,7 @@
 #include <functional>
 #include <stdio.h>
 #include "Face.h"
-#include <dlib/svm.h>
+#include <dlib/dlib/svm.h>
 
 enum Direction {
     Left,
