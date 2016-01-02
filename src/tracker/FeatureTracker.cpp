@@ -18,10 +18,14 @@ void selectNose(vector <Rect> noses, Rect &nose);
 
 
 FeatureTracker::FeatureTracker(Features features) : requiredFeatures(features) {
-    faceCascade.load("cascades/haarcascade_frontalface_alt.xml");
-    lefteyeCascade.load("cascades/haarcascade_lefteye_2splits.xml");
-    righteyeCascade.load("cascades/haarcascade_righteye_2splits.xml");
-    noseCascade.load("cascades/haarcascade_mcs_nose.xml");
+    bool loaded = true; 
+    loaded &= faceCascade.load("cascades/haarcascade_frontalface_alt.xml");
+    loaded &= lefteyeCascade.load("cascades/haarcascade_lefteye_2splits.xml");
+    loaded &= righteyeCascade.load("cascades/haarcascade_righteye_2splits.xml");
+    loaded &= noseCascade.load("cascades/haarcascade_mcs_nose.xml");
+    if (!loaded){
+        throw "cascades not loaded";
+    }
 }
 
 Face FeatureTracker::findFeaturesInFace(Mat head, Rect faceRect) {
