@@ -17,15 +17,7 @@ const Scalar RED_COLOR = Scalar(0,0,255);
 
 
 string directionName(Direction dir);
-
-
-void drawFaceOnFrame(Mat frame, Face face) {
-    rectangle(frame, face.nose, WHITE_COLOR);
-    rectangle(frame, face.rightEye, YELLOW_COLOR);
-    rectangle(frame, face.leftEye, YELLOW_COLOR);
-    rectangle(frame, face.face, RED_COLOR);
-}
-
+void drawFaceOnFrame(Mat frame, Face face);
 
 int main(int argc, char* argv[])
 {
@@ -54,6 +46,14 @@ int main(int argc, char* argv[])
     };
     return 0;
 }
+
+void drawFaceOnFrame(Mat frame, Face face) {
+    rectangle(frame, face.nose, WHITE_COLOR);
+    rectangle(frame, face.rightEye, CYAN_COLOR);
+    rectangle(frame, face.leftEye, YELLOW_COLOR);
+    rectangle(frame, face.face, RED_COLOR);
+}
+
 
 string directionName(Direction dir) {
     switch (dir) {
