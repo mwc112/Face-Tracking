@@ -18,10 +18,14 @@ void selectNose(vector <Rect> noses, Rect &nose);
 
 
 FeatureTracker::FeatureTracker(Features features) : requiredFeatures(features) {
-    faceCascade.load("cascades/haarcascade_frontalface_alt.xml");
-    lefteyeCascade.load("cascades/haarcascade_lefteye_2splits.xml");
-    righteyeCascade.load("cascades/haarcascade_righteye_2splits.xml");
-    noseCascade.load("cascades/haarcascade_mcs_nose.xml");
+    bool loaded = true; 
+    loaded &= faceCascade.load("cascades/haarcascade_frontalface_alt.xml");
+    loaded &= lefteyeCascade.load("cascades/haarcascade_lefteye_2splits.xml");
+    loaded &= righteyeCascade.load("cascades/haarcascade_righteye_2splits.xml");
+    loaded &= noseCascade.load("cascades/haarcascade_mcs_nose.xml");
+    if (!loaded){
+        throw "cascades not loaded";
+    }
 }
 
 Face FeatureTracker::findFeaturesInFace(Mat head, Rect faceRect) {
@@ -77,11 +81,7 @@ Face FeatureTracker::getFeatures(Mat frame) {
                                      1.1, 3, CASCADE_SCALE_IMAGE);
         if (faces.size()) {
             prevhead = faces[0];
-            //TODO
-            //turns out there actually is face in this frame, just not where we expected it
-            //based on the location of the face in the previous frame.
-            //we should do the feature detection here as well and return a face.
-            
+            return findFeaturesInFace(frame, prevhead);
         }
         //we throw an exception here because we don't have a face to return this frame.
         //TODO throw sensible exception
