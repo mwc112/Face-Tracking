@@ -1,8 +1,8 @@
 [submodule "src/lib/googletest"]
 	path = src/lib/googletest
 	url = https://github.com/google/googletest.git
-        ignore = dirty
+    ignore = dirty
 [submodule "src/lib/clandmark"]
 	path = src/lib/clandmark
 	url = https://github.com/uricamic/clandmark.git
-        ignore = dirty
+    ignore = dirty
