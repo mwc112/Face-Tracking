@@ -39,7 +39,7 @@ Point centerOfRect(Rect rect) {
     if (rect.area() == 0) {
         throw "no rect";
     }
-    Size halfSize = rect.size()/2;
+    Size halfSize = Size(rect.size().width/2, rect.size().height/2);
     return Point(rect.tl().x + halfSize.width, rect.tl().y + halfSize.height);
 }
 
