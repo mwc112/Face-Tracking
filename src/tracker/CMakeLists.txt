@@ -10,7 +10,9 @@ file(GLOB Tracker_SRC "*.h" "*.cpp")
 add_library(Tracker ${Tracker_SRC})
 target_include_directories(Tracker PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(Tracker ${OpenCV_LIBS})
+include(dlib/cmake)
+
+target_link_libraries(Tracker ${OpenCV_LIBS} dlib)
 
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

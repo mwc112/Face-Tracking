@@ -5,7 +5,10 @@
 
 class FileInput: public Input {
 public:
-    FileInput(string filePath);
+    FileInput(std::string filePath);
+    cv::Mat getFrame();
+private:
+    cv::VideoCapture cap;
 };
 
 #endif
