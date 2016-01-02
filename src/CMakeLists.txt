@@ -1,12 +1,15 @@
 cmake_minimum_required(VERSION 2.8)
 SET(CMAKE_CXX_FLAGS "-std=c++11")
-link_libraries(X11)
-
 
 project( MainAppParent)
 
 add_subdirectory(lib/googletest/googletest)
 
-add_subdirectory(wm)
+find_library(xlib X11)
+if(xlib)
+	add_subdirectory(wm)
+else()
+	add_subdirectory(wm-nox11)
+endif()
 add_subdirectory(tracker)
 add_subdirectory(MainApp)
