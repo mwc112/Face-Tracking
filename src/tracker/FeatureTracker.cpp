@@ -77,11 +77,7 @@ Face FeatureTracker::getFeatures(Mat frame) {
                                      1.1, 3, CASCADE_SCALE_IMAGE);
         if (faces.size()) {
             prevhead = faces[0];
-            //TODO
-            //turns out there actually is face in this frame, just not where we expected it
-            //based on the location of the face in the previous frame.
-            //we should do the feature detection here as well and return a face.
-            
+            return findFeaturesInFace(frame, prevhead);
         }
         //we throw an exception here because we don't have a face to return this frame.
         //TODO throw sensible exception
