@@ -29,7 +29,6 @@
 Demo
 
 #because cmake
-*.cmake
 Makefile
 
 #temp

@@ -15,7 +15,7 @@ NormalizedPoint rectCenterAndNormalize(Rect rect, Rect face) {
     if (rect.area() == 0) {
         return Point();
     }
-    Size halfSize = rect.size()/2;
+    Size halfSize = Size(rect.size().width/2, rect.size().height/2);
     float x = (rect.tl().x + halfSize.width - face.tl().x)/(float)face.size().width;
     return NormalizedPoint(x, (rect.tl().y + halfSize.height - face.tl().y)/(float)face.size().height);
 }
