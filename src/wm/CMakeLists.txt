@@ -6,10 +6,10 @@ include_directories( /usr/local/include/ )
 
 add_library(WM wm.cpp wm.h)
 target_link_libraries(WM X11)
+target_include_directories(WM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-target_include_directories(WM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(runWmTests tests/tests.cpp)
 target_link_libraries(runWmTests gtest gtest_main WM)
 add_test(runWmTests runWmTests)

@@ -35,8 +35,7 @@ int main(int argc, char* argv[])
     CameraInput ci;
     FeatureTracker featureTracker((Features) (Eyes | Nose));
     HeadTracker headTracker;
-		wm *w_manager = new wm();
-	
+    wm *w_manager = new wm();
     namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
     
     while(1){
@@ -48,8 +47,8 @@ int main(int argc, char* argv[])
             imshow("Demo", frame); //show the frame
             waitKey(20);
             Direction dir = headTracker.getDirection(face);
-						wm::Direction wm_dir = (wm::Direction)(dir);
-						w_manager->set_focus_screen(wm_dir);
+            wm::Direction wm_dir = (wm::Direction)(dir);
+            w_manager->set_focus_screen(wm_dir);
             cout << directionName(dir) << endl;
         } catch (const char * e) {
 //            cout << e << endl;
