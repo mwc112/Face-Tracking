@@ -10,14 +10,7 @@
 using namespace std;
 using namespace cv;
 
-const Scalar WHITE_COLOR = Scalar(255, 225, 255);
-const Scalar CYAN_COLOR = Scalar(255, 225, 0);
-const Scalar YELLOW_COLOR = Scalar(0, 225, 255);
-const Scalar RED_COLOR = Scalar(0,0,255);
-
-
 string directionName(Direction dir);
-void drawFaceOnFrame(Mat frame, Face face);
 
 int main(int argc, char* argv[])
 {
@@ -33,7 +26,7 @@ int main(int argc, char* argv[])
         try {
             frame = ci.getFrame();
             Face face = featureTracker.getFeatures(frame);
-            drawFaceOnFrame(frame, face);
+            face.drawOnFrame(frame);
             Direction dir = headTracker.getDirection(face);
             w_manager->set_focus_screen((wm::Direction)dir);
             cout << directionName(dir) << endl;
@@ -47,12 +40,7 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-void drawFaceOnFrame(Mat frame, Face face) {
-    rectangle(frame, face.nose, WHITE_COLOR);
-    rectangle(frame, face.rightEye, CYAN_COLOR);
-    rectangle(frame, face.leftEye, YELLOW_COLOR);
-    rectangle(frame, face.face, RED_COLOR);
-}
+
 
 
 string directionName(Direction dir) {
