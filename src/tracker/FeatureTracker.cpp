@@ -12,7 +12,8 @@ using namespace std;
 Rect estimateNoseRegion(Rect faceRect);
 Rect estimateEyesRegion(Rect faceRect);
 void equalizeFrame(Mat &frame);
-void splitEyes(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &leftEye, Rect &rightEye);
+void getRightEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &rightEye);
+void getLeftEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &leftEye);
 void selectNose(vector <Rect> noses, Rect &nose);
 
 
@@ -52,7 +53,8 @@ Face FeatureTracker::findFeaturesInFace(Mat head, Rect faceRect) {
     head.locateROI(wholesize, offset);
     Face face;
     face.face = faceRect + offset;
-    splitEyes(leftEyes, rightEyes, head.size().width/2, face.leftEye, face.rightEye);
+    getLeftEye(leftEyes, rightEyes, eyesROI.size().width/2, face.leftEye);
+    getRightEye(leftEyes, rightEyes, eyesROI.size().width/2, face.rightEye);
     selectNose(noses, face.nose);
     face.nose += noseRegion.tl() + offset;
     face.leftEye += offset;
@@ -120,29 +122,32 @@ void equalizeFrame(Mat &frame) {
     cvtColor(frame, frame, CV_HSV2RGB);
 }
 
-
-void splitEyes(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &leftEye, Rect &rightEye) {
-    bool leftEyeSet = false, rightEyeSet = false;
-    vector<Rect> eyes = leftEyes;
-    for (int i = 0; i < 2; i++) {
-        for (auto eye : eyes) {
-            if (eye.x >= border) {
-                if (leftEyeSet) {
-                    //                    leftEye |= eye;
-                } else {
-                    leftEye = eye;
-                    leftEyeSet = true;
-                }
-            } else {
-                if (rightEyeSet) {
-                    //                    rightEye |= eye;
-                } else {
-                    rightEye = eye;
-                    rightEyeSet = true;
-                }
-            }
+void getRightEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &rightEye) {
+    for (auto eye: rightEyes) {
+        if (eye.br().x <= border) {
+            rightEye = eye;
+            return;
         }
-        eyes = rightEyes;
+    }
+    for (auto eye: leftEyes) {
+        if (eye.br().x <= border) {
+            rightEye = eye;
+            return;
+        }
+    }
+}
+void getLeftEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &leftEye) {
+    for (auto eye: leftEyes) {
+        if (eye.tl().x >= border) {
+            leftEye = eye;
+            return;
+        }
+    }
+    for (auto eye: rightEyes) {
+        if (eye.tl().x >= border) {
+            leftEye = eye;
+            return;
+        }
     }
 }
 
