@@ -2,7 +2,7 @@
 
 using namespace cv;
 CameraInput::CameraInput() {
-    cap = VideoCapture(0);
+    cap = VideoCapture(1);
 }
 
 Mat CameraInput::getFrame() {

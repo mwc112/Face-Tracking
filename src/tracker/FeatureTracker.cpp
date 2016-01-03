@@ -25,7 +25,7 @@ dlib::rectangle rect_to_rectangle(Rect r){
     return dlib::rectangle(r.x, r.y, r.x + r.width, r.x + r.height);
 }
 Rect rectangle_to_rect(dlib::rectangle r){
-    return Rect(r.left(), r.top(), r.right() - r.left(), r.top() - r.bottom());
+    return Rect(r.left(), r.top(), r.width(), r.height());
 }
 
 
@@ -35,7 +35,7 @@ FeatureTracker::FeatureTracker(Features features) : requiredFeatures(features) {
     loaded &= lefteyeCascade.load("cascades/haarcascade_lefteye_2splits.xml");
     loaded &= righteyeCascade.load("cascades/haarcascade_righteye_2splits.xml");
     loaded &= noseCascade.load("cascades/haarcascade_mcs_nose.xml");
-    dlib::frontal_face_detector detector = dlib::get_frontal_face_detector();
+    detector = dlib::get_frontal_face_detector();
     if (!loaded){
         throw "cascades not loaded";
     }
@@ -53,31 +53,31 @@ Face FeatureTracker::findFeaturesInFace(Mat head, Rect faceRect) {
     //exprimentally a lower minNeighbours gives a higher feature find rate, is the best.
     auto minN = 1;
     //detection
-    /*
+    
     vector<Rect> noses, rightEyes, leftEyes;
-    noseCascade.detectMultiScale(noseROI, noses,
-                                 1.1, minN, 0,
-                                 Size(0,noseRegion.height/2), noseRegion.size());
-    righteyeCascade.detectMultiScale(eyesROI, rightEyes,
-                                     1.1, minN, CASCADE_SCALE_IMAGE,
-                                     Size(0,eyesRegion.height/2), eyesRegion.size());
-    lefteyeCascade.detectMultiScale(eyesROI, leftEyes,
-                                    1.1, minN, CASCADE_SCALE_IMAGE,
-                                    Size(0,eyesRegion.height/2), eyesRegion.size());
-    */
+    //noseCascade.detectMultiScale(noseROI, noses,
+    //                             1.1, minN, 0,
+    //                             Size(0,noseRegion.height/2), noseRegion.size());
+    //righteyeCascade.detectMultiScale(eyesROI, rightEyes,
+    //                                 1.1, minN, CASCADE_SCALE_IMAGE,
+    //                                 Size(0,eyesRegion.height/2), eyesRegion.size());
+    //lefteyeCascade.detectMultiScale(eyesROI, leftEyes,
+    //                                1.1, minN, CASCADE_SCALE_IMAGE,
+    //                                Size(0,eyesRegion.height/2), eyesRegion.size());
+    
     Point offset;
     Size wholesize;
     
-    //head.locateROI(wholesize, offset);
+    head.locateROI(wholesize, offset);
     Face face;
-    /*
+    
     face.face = faceRect + offset;
-    getLeftEye(leftEyes, rightEyes, eyesROI.size().width/2, face.leftEye);
-    getRightEye(leftEyes, rightEyes, eyesROI.size().width/2, face.rightEye);
+    //getLeftEye(leftEyes, rightEyes, eyesROI.size().width/2, face.leftEye);
+    //getRightEye(leftEyes, rightEyes, eyesROI.size().width/2, face.rightEye);
     selectNose(noses, face.nose);
-    face.nose += noseRegion.tl() + offset;
+    //face.nose += noseRegion.tl() + offset;
     face.leftEye += offset;
-    face.rightEye += offset;*/
+    face.rightEye += offset;
     return face;
 }
 
@@ -85,15 +85,16 @@ Face FeatureTracker::findFeaturesInFace(Mat head, Rect faceRect) {
 Face FeatureTracker::getFeatures(Mat frame) {
     vector<Rect> faces;
     
-    Mat head = frame(prevhead);
+    //Mat head = frame(prevhead);
     
+    dlib::cv_image<dlib::bgr_pixel> cimg(frame);
     //faceCascade.detectMultiScale(head, faces,
     //                             1.1, 3, CASCADE_SCALE_IMAGE);
-    std::vector<dlib::rectangle> dets = detector(dlib::cv_image<dlib::bgr_pixel>(frame));
-
-    if (faces.size() >= 1) {
+    std::vector<dlib::rectangle> dets = detector(cimg);
+    cout << dets.size() << endl;
+    if (dets.size() >= 1) {
         Rect r = rectangle_to_rect(dets[0]);
-        return findFeaturesInFace(head, r);
+        return findFeaturesInFace(frame, r); //head
     }  else {
         //If we lose the face, recalculate from scratch
         faceCascade.detectMultiScale(frame, faces,
