@@ -6,7 +6,7 @@ project( MainAppParent)
 add_subdirectory(lib/googletest/googletest)
 
 find_library(xlib X11)
-if(xlib)
+if(xlib AND NOT APPLE)
 	add_subdirectory(wm)
 else()
 	add_subdirectory(wm-nox11)
