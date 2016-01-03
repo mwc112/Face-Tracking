@@ -10,8 +10,7 @@ Mat CameraInput::getFrame() {
     if (cap.read(mat)) {
         return mat;
     } else {
-        //TODO Throw Exception
-        throw "camera";
+        throw NoInput("camera", "0");
     }
     
 }
