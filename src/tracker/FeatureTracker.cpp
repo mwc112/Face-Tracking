@@ -22,32 +22,29 @@ void getRightEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect
 void getLeftEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &leftEye);
 void selectNose(vector <Rect> noses, Rect &nose);
 
-dlib::rectangle rect_to_rectangle(Rect r){
-    return dlib::rectangle(r.x, r.y, r.width, r.height);
-}
 
 Rect rectangle_to_rect(dlib::rectangle r){
     return Rect(r.left(), r.top(), r.width(), r.height());
 }
-
 
 FeatureTracker::FeatureTracker(Features features) : requiredFeatures(features) {
     detector = dlib::get_frontal_face_detector();
     dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> sp;
 }
 
-Face FeatureTracker::findFeaturesInFace(Mat head, Rect faceRect) {
+Face FeatureTracker::findFeaturesInFace(Mat head, dlib::rectangle faceRect) {
     //detection
     dlib::cv_image<dlib::bgr_pixel> cimg(head);
-    dlib::full_object_detection shape = sp(cimg, rect_to_rectangle(faceRect));
+    dlib::full_object_detection shape = sp(cimg, faceRect);
     
-    cout << "parts" << shape.num_parts() << endl;
+    std::vector<Point> landmarks;
     for (int i = 0; i < shape.num_parts(); i++){
-        circle(head, Point(shape.part(i).x(), shape.part(i).y()), 5, YELLOW_COLOR, -1);
+        landmarks.push_back(Point(shape.part(i).x(), shape.part(i).y()));
     }   
-
  
     Face face;
+    face.face = rectangle_to_rect(faceRect);
+    face.landmarks = landmarks;
     return face;
 }
 
@@ -59,15 +56,13 @@ Face FeatureTracker::getFeatures(Mat frame) {
     dlib::cv_image<dlib::bgr_pixel> cimg(head);
     vector<dlib::rectangle> dets = detector(cimg);
     if (dets.size() >= 1) {
-        Rect r = rectangle_to_rect(dets[0]);
-        return findFeaturesInFace(head, r);
+        return findFeaturesInFace(head, dets[0]);
     }  else {
         //If we lose the face, recalculate from scratch
         dlib::cv_image<dlib::bgr_pixel> frameimage(frame);
         dets = detector(frameimage);
         if (dets.size() >= 1) {
-            prevhead = rectangle_to_rect(dets[0]);
-            return findFeaturesInFace(frame, prevhead);
+            return findFeaturesInFace(frame, dets[0]);
         }
         //we throw an exception here because we don't have a face to return this frame.
         //TODO throw sensible exception

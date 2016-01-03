@@ -20,7 +20,7 @@ public:
     FeatureTracker(Features features);
     Face getFeatures(cv::Mat frame);
 private:
-    Face findFeaturesInFace(cv::Mat head, cv::Rect face);
+    Face findFeaturesInFace(cv::Mat head, dlib::rectangle face);
     cv::CascadeClassifier faceCascade, lefteyeCascade, righteyeCascade, noseCascade, earCascade;
     cv::Rect prevhead;
     dlib::frontal_face_detector detector;

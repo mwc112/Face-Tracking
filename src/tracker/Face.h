@@ -14,6 +14,7 @@ struct Face {
         leftEye,
         rightEye,
         nose;
+    std::vector<cv::Point> landmarks;
     void drawOnFrame(cv::Mat frame) {
         rectangle(frame, this->nose, WHITE_COLOR);
         rectangle(frame, this->rightEye, CYAN_COLOR);
