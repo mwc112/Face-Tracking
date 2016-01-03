@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
     CameraInput ci;
     FeatureTracker featureTracker((Features) (Eyes | Nose));
     HeadTracker headTracker;
-    wm *w_manager = new wm();
+    wm w_manager;
     namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
     
     Mat frame;
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
             Face face = featureTracker.getFeatures(frame);
             face.drawOnFrame(frame);
             Direction dir = headTracker.getDirection(face);
-            w_manager->set_focus_screen((wm::Direction)dir);
+            w_manager.set_focus_screen((wm::Direction)dir);
             cout << directionName(dir) << endl;
             imshow("Demo", frame);
             waitKey(20);
