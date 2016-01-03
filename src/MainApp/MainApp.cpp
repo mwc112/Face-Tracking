@@ -61,17 +61,20 @@ int main(int argc, char* argv[])
     FeatureTracker featureTracker((Features) (Eyes | Nose));
     FeatureAverager featureAverager;
     HeadTracker headTracker;
-    wm w_manager;
     namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
+    //wm w_manager;
     
     Mat frame;
+    frame = ci.getFrame();
+    imshow("Demo", frame);
+    waitKey(20);
     while (true) {
         try {
             frame = ci.getFrame();
             Face face = featureTracker.getFeatures(frame);
             drawFaceOnFrame(frame, face);
             Direction dir = headTracker.getDirection(face);
-            w_manager.set_focus_screen((wm::Direction)dir);
+            //w_manager.set_focus_screen((wm::Direction)dir);
             cout << directionName(dir) << endl;
             imshow("Demo", frame);
             waitKey(20);
