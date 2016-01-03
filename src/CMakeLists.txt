@@ -13,3 +13,5 @@ else()
 endif()
 add_subdirectory(tracker)
 add_subdirectory(MainApp)
+
+add_custom_target(run cd MainApp && ./MainApp DEPENDS MainApp)
