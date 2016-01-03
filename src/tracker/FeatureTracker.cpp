@@ -1,4 +1,5 @@
 #include "FeatureTracker.h"
+
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
@@ -22,84 +23,49 @@ void getLeftEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect 
 void selectNose(vector <Rect> noses, Rect &nose);
 
 dlib::rectangle rect_to_rectangle(Rect r){
-    return dlib::rectangle(r.x, r.y, r.x + r.width, r.x + r.height);
+    return dlib::rectangle(r.x, r.y, r.width, r.height);
 }
+
 Rect rectangle_to_rect(dlib::rectangle r){
     return Rect(r.left(), r.top(), r.width(), r.height());
 }
 
 
 FeatureTracker::FeatureTracker(Features features) : requiredFeatures(features) {
-    bool loaded = true; 
-    //loaded &= faceCascade.load("cascades/haarcascade_frontalface_alt.xml");
-    loaded &= lefteyeCascade.load("cascades/haarcascade_lefteye_2splits.xml");
-    loaded &= righteyeCascade.load("cascades/haarcascade_righteye_2splits.xml");
-    loaded &= noseCascade.load("cascades/haarcascade_mcs_nose.xml");
     detector = dlib::get_frontal_face_detector();
-    if (!loaded){
-        throw "cascades not loaded";
-    }
+    dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> sp;
 }
 
 Face FeatureTracker::findFeaturesInFace(Mat head, Rect faceRect) {
-    //Rect eyesRegion = estimateEyesRegion(faceRect);
-    //Rect noseRegion = estimateNoseRegion(faceRect);
-    
-    //Eyes works better when looking at the whole head,
-    //but with the size constraint of the eyeRegion.
-    //Mat eyesROI = head;
-    //Mat noseROI = head(noseRegion);
-    
-    //exprimentally a lower minNeighbours gives a higher feature find rate, is the best.
-    auto minN = 1;
     //detection
+    dlib::cv_image<dlib::bgr_pixel> cimg(head);
+    dlib::full_object_detection shape = sp(cimg, rect_to_rectangle(faceRect));
     
-    vector<Rect> noses, rightEyes, leftEyes;
-    //noseCascade.detectMultiScale(noseROI, noses,
-    //                             1.1, minN, 0,
-    //                             Size(0,noseRegion.height/2), noseRegion.size());
-    //righteyeCascade.detectMultiScale(eyesROI, rightEyes,
-    //                                 1.1, minN, CASCADE_SCALE_IMAGE,
-    //                                 Size(0,eyesRegion.height/2), eyesRegion.size());
-    //lefteyeCascade.detectMultiScale(eyesROI, leftEyes,
-    //                                1.1, minN, CASCADE_SCALE_IMAGE,
-    //                                Size(0,eyesRegion.height/2), eyesRegion.size());
-    
-    Point offset;
-    Size wholesize;
-    
-    head.locateROI(wholesize, offset);
+    cout << "parts" << shape.num_parts() << endl;
+    for (int i = 0; i < shape.num_parts(); i++){
+        circle(head, Point(shape.part(i).x(), shape.part(i).y()), 5, YELLOW_COLOR, -1);
+    }   
+
+ 
     Face face;
-    
-    face.face = faceRect + offset;
-    //getLeftEye(leftEyes, rightEyes, eyesROI.size().width/2, face.leftEye);
-    //getRightEye(leftEyes, rightEyes, eyesROI.size().width/2, face.rightEye);
-    selectNose(noses, face.nose);
-    //face.nose += noseRegion.tl() + offset;
-    face.leftEye += offset;
-    face.rightEye += offset;
     return face;
 }
 
 
 Face FeatureTracker::getFeatures(Mat frame) {
-    vector<Rect> faces;
     
-    //Mat head = frame(prevhead);
+    Mat head = frame(prevhead);
     
-    dlib::cv_image<dlib::bgr_pixel> cimg(frame);
-    //faceCascade.detectMultiScale(head, faces,
-    //                             1.1, 3, CASCADE_SCALE_IMAGE);
-    std::vector<dlib::rectangle> dets = detector(cimg);
-    cout << dets.size() << endl;
+    dlib::cv_image<dlib::bgr_pixel> cimg(head);
+    vector<dlib::rectangle> dets = detector(cimg);
     if (dets.size() >= 1) {
         Rect r = rectangle_to_rect(dets[0]);
-        return findFeaturesInFace(frame, r); //head
+        return findFeaturesInFace(head, r);
     }  else {
         //If we lose the face, recalculate from scratch
-        faceCascade.detectMultiScale(frame, faces,
-                                     1.1, 3, CASCADE_SCALE_IMAGE);
-        if (faces.size()) {
+        dlib::cv_image<dlib::bgr_pixel> frameimage(frame);
+        dets = detector(frameimage);
+        if (dets.size() >= 1) {
             prevhead = rectangle_to_rect(dets[0]);
             return findFeaturesInFace(frame, prevhead);
         }
