@@ -1,6 +1,7 @@
 #ifndef FEATURE_TRACKER_H
 #define FEATURE_TRACKER_H
 
+#include <dlib/dlib/image_processing/frontal_face_detector.h>
 #include "opencv2/objdetect/objdetect.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -20,6 +21,7 @@ public:
 private:
     Face findFeaturesInFace(cv::Mat head, cv::Rect face);
     cv::CascadeClassifier faceCascade, lefteyeCascade, righteyeCascade, noseCascade, earCascade;
+    dlib::frontal_face_detector detector;
     Features requiredFeatures;
     cv::Rect prevhead;
 };
