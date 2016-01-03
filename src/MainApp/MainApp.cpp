@@ -36,9 +36,9 @@ Point centerOfRect(Rect rect) {
 
 void drawFaceOnFrame(Mat frame, Face face) {
     auto radius = 5;
-    try { circle(frame, centerOfRect(face.nose), radius, WHITE_COLOR, -1); } catch (...){}
-    try { circle(frame, centerOfRect(face.rightEye), radius, CYAN_COLOR, -1); } catch (...){}
-    try { circle(frame, centerOfRect(face.leftEye), radius, YELLOW_COLOR, -1); } catch (...){}
+//    try { circle(frame, centerOfRect(face.nose), radius, WHITE_COLOR, -1); } catch (...){}
+//    try { circle(frame, centerOfRect(face.rightEye), radius, CYAN_COLOR, -1); } catch (...){}
+//    try { circle(frame, centerOfRect(face.leftEye), radius, YELLOW_COLOR, -1); } catch (...){}
     for (int i = 0; i < face.landmarks.size(); i++){
         try { circle(frame, face.landmarks[i], radius, YELLOW_COLOR, -1); } catch (...){}
         try { putText(frame, to_string(i), face.landmarks[i], FONT_HERSHEY_SIMPLEX, 1, CYAN_COLOR); } catch (...){}
@@ -46,17 +46,7 @@ void drawFaceOnFrame(Mat frame, Face face) {
     rectangle(frame, face.face, RED_COLOR);
 }
 
-void drawFaceOnFrameRects(Mat frame, Face face) {
-    rectangle(frame, face.nose, WHITE_COLOR);
-    rectangle(frame, face.rightEye, CYAN_COLOR);
-    rectangle(frame, face.leftEye, YELLOW_COLOR);
-    rectangle(frame, face.face, RED_COLOR);
-}
 
-
-string faceDescription(Face face) {
-    
-}
 
 int main(int argc, char* argv[])
 {
