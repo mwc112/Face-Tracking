@@ -5,7 +5,7 @@ project( MainAppParent)
 add_subdirectory(lib/googletest/googletest)
 
 find_library(xlib X11)
-if(xlib)
+if(xlib AND NOT APPLE)
 	add_subdirectory(wm)
 else()
 	add_subdirectory(wm-nox11)
@@ -13,3 +13,5 @@ endif()
 
 add_subdirectory(tracker)
 add_subdirectory(MainApp)
+
+add_custom_target(run cd MainApp && ./MainApp DEPENDS MainApp)
