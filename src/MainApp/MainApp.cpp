@@ -5,6 +5,7 @@
 #include "HeadTracker.h"
 #include "CameraInput.h"
 #include "wm.h"
+#include <csignal>
 
 using namespace std;
 using namespace cv;
@@ -22,9 +23,15 @@ void drawFaceOnFrame(Mat frame, Face face) {
 
 
 
+void signalHandler(int signum) {
+    exit(signum);
+}
+
+
+
 int main(int argc, char* argv[])
 {
-    
+    signal(SIGINT, signalHandler);  
     CameraInput ci;
     FeatureTracker featureTracker;
     HeadTracker headTracker;
