@@ -30,9 +30,9 @@ Face FeatureTracker::findFeaturesInFace(Mat head, dlib::rectangle faceRect) {
     dlib::cv_image<dlib::bgr_pixel> cimg(head);
     dlib::full_object_detection shape = sp(cimg, faceRect);
     
-    std::vector<Point> landmarks;
+    std::array<Point, 68> landmarks;
     for (int i = 0; i < shape.num_parts(); i++){
-        landmarks.push_back(Point(shape.part(i).x(), shape.part(i).y()));
+        landmarks[i] = (Point(shape.part(i).x(), shape.part(i).y()));
     }   
  
     Face face;
