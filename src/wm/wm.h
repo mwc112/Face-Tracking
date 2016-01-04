@@ -12,7 +12,7 @@ class wm{
 
 private:
 	std::unordered_map<Window, int[2]> *win_mouse;
-
+	Display *d;
 public:
 	typedef enum Direction {
 	    Left,
@@ -32,6 +32,7 @@ public:
 	void save_pointer(Window);
 
 	wm(){
+    	d = XOpenDisplay(NULL);
 		win_mouse = new std::unordered_map<Window, int[2]>();
 	}
 };
