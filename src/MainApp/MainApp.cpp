@@ -41,7 +41,7 @@ void drawFaceOnFrame(Mat frame, Face face) {
 //    try { circle(frame, centerOfRect(face.leftEye), radius, YELLOW_COLOR, -1); } catch (...){}
     for (int i = 0; i < face.landmarks.size(); i++){
         try { circle(frame, face.landmarks[i], radius, YELLOW_COLOR, -1); } catch (...){}
-        try { putText(frame, to_string(i), face.landmarks[i], FONT_HERSHEY_SIMPLEX, 1, CYAN_COLOR); } catch (...){}
+        try { putText(frame, to_string(i), face.landmarks[i], FONT_HERSHEY_SIMPLEX, 0.5, CYAN_COLOR); } catch (...){}
     }
     rectangle(frame, face.face, RED_COLOR);
 }
@@ -91,5 +91,6 @@ string directionName(Direction dir) {
         case Middle: return "middle";
         case Unknown: return "unknown";
     }
+    throw "lol";
 }
 
