@@ -5,6 +5,10 @@ CameraInput::CameraInput() {
     cap = VideoCapture(0);
 }
 
+CameraInput::~CameraInput() {
+    cap.release();
+}
+
 Mat CameraInput::getFrame() {
     Mat mat;
     if (cap.read(mat)) {
