@@ -3,14 +3,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
-
-#include <dlib/dlib/image_processing/render_face_detections.h>
-#include <dlib/dlib/image_processing.h>
-#include <dlib/dlib/gui_widgets.h>
-#include <dlib/dlib/image_io.h>
 #include <dlib/opencv.h>
-
-#define DISPLAY
 
 using namespace cv;
 using namespace std;

@@ -7,7 +7,17 @@ find_package( OpenCV REQUIRED )
 
 file(GLOB Tracker_SRC "*.h" "*.cpp")
 
+#needed because image lib's used by dlib output this warning a lot
 add_definitions ("-Wno-deprecated-register")
+
+#needed to work on lab machines because http://intel.ly/15OrBec
+set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed")
+
+#we don't need GUI support from dlib
+set(DLIB_NO_GUI_SUPPORT 1)
+
+#makes face detection run faster
+set(USE_SSE4_INSTRUCTIONS 1)
 
 include(dlib/dlib/cmake)
 
