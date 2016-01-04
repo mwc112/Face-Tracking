@@ -6,7 +6,6 @@
 #include "CameraInput.h"
 #include "wm.h"
 
-
 using namespace std;
 using namespace cv;
 
@@ -59,9 +58,6 @@ int main(int argc, char* argv[])
     //wm w_manager;
     
     Mat frame;
-    frame = ci.getFrame();
-    imshow("Demo", frame);
-    waitKey(20);
     while (true) {
         try {
             frame = ci.getFrame();
@@ -76,6 +72,9 @@ int main(int argc, char* argv[])
             //cout << e << endl;
             imshow("Demo", frame); //show the frame
             waitKey(20);
+        } catch (NoInput e) {
+            cout << "No Camera detected, exiting.." << endl;
+            exit(0);
         }
     };
     return 0;

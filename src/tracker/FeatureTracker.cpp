@@ -63,22 +63,6 @@ Face FeatureTracker::getFeatures(Mat frame) {
     }
 }
 
-Rect estimateNoseRegion(Rect faceRect) {
-    Rect noseRect = faceRect;
-    noseRect.y += 2*noseRect.height/9;
-    noseRect.height /= 2;
-    noseRect.x += noseRect.width/4;
-    noseRect.width /= 2;
-    return noseRect;
-}
-
-Rect estimateEyesRegion(Rect faceRect) {
-    Rect eyesRect = faceRect;
-    eyesRect.y += 2*eyesRect.height/9;
-    eyesRect.height /= 3;
-    return eyesRect;
-}
-
 
 void equalizeFrame(Mat &frame) {
     //this should help in high contrast settings (eg if a window is behind you)
@@ -96,38 +80,3 @@ void equalizeFrame(Mat &frame) {
     cvtColor(frame, frame, CV_HSV2RGB);
 }
 
-void getRightEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &rightEye) {
-    for (auto eye: rightEyes) {
-        if (eye.br().x <= border) {
-            rightEye = eye;
-            return;
-        }
-    }
-    for (auto eye: leftEyes) {
-        if (eye.br().x <= border) {
-            rightEye = eye;
-            return;
-        }
-    }
-}
-void getLeftEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &leftEye) {
-    for (auto eye: leftEyes) {
-        if (eye.tl().x >= border) {
-            leftEye = eye;
-            return;
-        }
-    }
-    for (auto eye: rightEyes) {
-        if (eye.tl().x >= border) {
-            leftEye = eye;
-            return;
-        }
-    }
-}
-
-
-void selectNose(vector <Rect> noses, Rect &nose) {
-    if (noses.size()) {
-        nose = noses[0];
-    }
-}
