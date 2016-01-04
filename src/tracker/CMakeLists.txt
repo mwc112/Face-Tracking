@@ -11,7 +11,8 @@ file(GLOB Tracker_SRC "*.h" "*.cpp")
 add_definitions ("-Wno-deprecated-register")
 
 #needed to work on lab machines because http://intel.ly/15OrBec
-set(CMAKE_EXE_LINKER_FLAGS "-Wl,--no-as-needed")
+set(DLIB_USE_BLAS 0)
+set(DLIB_USE_LAPACK 0)
 
 #we don't need GUI support from dlib
 set(DLIB_NO_GUI_SUPPORT 1)
