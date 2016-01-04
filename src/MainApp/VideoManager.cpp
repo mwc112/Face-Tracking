@@ -14,7 +14,7 @@
 #include <iostream>
 #include <stdio.h>
 
-cv::Mat VideoManager::getFrame(){
+Frame VideoManager::getFrame(){
   return ci->getFrame();
 }
 

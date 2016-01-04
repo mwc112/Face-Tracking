@@ -6,7 +6,7 @@
 class VideoManager{
 
 public:
-  cv::Mat getFrame();
+  Frame getFrame();
   void changeVideo(int camera);
   void changeVideo(std::string path);
   VideoManager();

@@ -5,7 +5,7 @@ FileInput::FileInput(std::string filePath) : filePath(filePath) {
     cap = VideoCapture(filePath);
 }
 
-Mat FileInput::getFrame() {
+Frame FileInput::getFrame() {
     Mat mat;
     if (cap.read(mat)) {
         return mat;

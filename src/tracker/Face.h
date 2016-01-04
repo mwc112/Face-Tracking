@@ -4,6 +4,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include <array>
+#include "Frame.h"
 
 const cv::Scalar WHITE_COLOR(255, 225, 255);
 const cv::Scalar CYAN_COLOR(255, 225, 0);
@@ -39,11 +40,13 @@ struct Face {
         leftEyebrow = VECTOR_VIEW(LEFT_EYEBROW_RANGE);
         rightEyebrow = VECTOR_VIEW(RIGHT_EYEBROW_RANGE);
     }
-    void drawOnFrame(cv::Mat frame) {
-//        rectangle(frame, this->nose, WHITE_COLOR);
-//        rectangle(frame, this->rightEye, CYAN_COLOR);
-//        rectangle(frame, this->leftEye, YELLOW_COLOR);
-//        rectangle(frame, this->face, RED_COLOR);
+    void drawOnFrame(Frame frame) {
+        auto radius = 5;
+        for (int i = 0; i < this->landmarks.size(); i++){
+            try { cv::circle(frame, this->landmarks[i], radius, YELLOW_COLOR, -1); } catch (...){}
+            try { cv::putText(frame, std::to_string(i), this->landmarks[i], cv::FONT_HERSHEY_SIMPLEX, 0.5, CYAN_COLOR); } catch (...){}
+        }
+        cv::rectangle(frame, this->face, RED_COLOR);
     };
 };
 #endif

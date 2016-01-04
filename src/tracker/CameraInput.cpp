@@ -10,7 +10,7 @@ CameraInput::~CameraInput() {
     cap.release();
 }
 
-Mat CameraInput::getFrame() {
+Frame CameraInput::getFrame() {
     Mat mat;
     if (cap.read(mat)) {
         return mat;
