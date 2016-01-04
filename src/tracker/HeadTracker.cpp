@@ -34,12 +34,15 @@ Direction HeadTracker::getDirection(Face face) {
 
     auto m = (float)(noseBottom.x() - noseTop.x())/(float)(noseBottom.y() - noseTop.y());
     
-    if (m <= 1 && m >= -1) {
+    auto threshold = 0.2;
+    if (m <= threshold && m >= -threshold) {
         newDirection = Middle;
-    } else if (m < -1) {
+    } else if (m < -threshold) {
         newDirection = Left;
-    } else {
+    } else if (m > threshold){
         newDirection = Right;
+    } else {
+        throw "No new direction";
     }
     if (newDirection != currentDirection) {
         currentDirection = newDirection;
