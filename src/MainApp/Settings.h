@@ -12,8 +12,8 @@ public:
   int getCamera();
   void addVideoObserver(VideoManager* vm);
   int getCameraCount();
-  void toggleManager();
-  bool getManager();
+  bool toggleTrackingState();
+  bool getTrackingState();
   Settings(Settings const&) = delete;
   void operator=(Settings const&)  = delete; 
 private:
@@ -21,7 +21,7 @@ private:
   int currCamera;
   std::vector<VideoManager*> observers;
   int maxCamera;
-  bool manager;
+  bool trackingState;
 };
 
 

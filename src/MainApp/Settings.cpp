@@ -7,8 +7,8 @@ int Settings::getCamera() {
   return currCamera;
 }
 
-bool Settings::getManager() {
-  return manager;
+bool Settings::getTrackingState() {
+  return trackingState;
 }
  
 void Settings::setCamera(int camera) {
@@ -19,9 +19,10 @@ void Settings::setCamera(int camera) {
 }
 
 
-void Settings::toggleManager() {
-  manager = !manager;
-  std::cout << manager << std::endl;
+bool Settings::toggleTrackingState() {
+  trackingState = !trackingState;
+  std::cout << trackingState << std::endl;
+  return trackingState;
 }
 
 int Settings::getCameraCount(){
@@ -35,7 +36,7 @@ Settings* Settings::getInstance(){
 
 Settings::Settings(){
   currCamera = 0;
-  manager = true;
+  trackingState = true;
   int i = -1;
   try { 
     while(true){

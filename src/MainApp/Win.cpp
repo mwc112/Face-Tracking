@@ -43,8 +43,7 @@ void Win::on_camera_select(unsigned long i){
 
 void Win::on_off_clicked(){
   Settings* settings = Settings::getInstance();
-  settings->toggleManager();
-  if (settings->getManager()) {
+  if (settings->toggleTrackingState()) {
     off.set_name("off");
   } else {
     off.set_name("on");
