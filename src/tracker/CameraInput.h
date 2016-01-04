@@ -9,6 +9,7 @@ public:
     cv::Mat getFrame();
 private:
     cv::VideoCapture cap;
+    int camera;
 };
 
 #endif

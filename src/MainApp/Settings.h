@@ -1,5 +1,5 @@
 #ifndef MAIN_SETTINGS
-#define MAIN SETTINGS
+#define MAIN_SETTINGS
 #include <vector>
 #include "VideoManager.h"
 #include "Input.h"
@@ -12,13 +12,13 @@ public:
   int getCamera();
   void addVideoObserver(VideoManager* vm);
   Settings(Settings const&) = delete;
-  void operator=(Settings const&)  = delete;
-
+  void operator=(Settings const&)  = delete; 
+  int getCameraCount();
 private:
   Settings();
   int currCamera;
-  std::vector<int> cameras;
   std::vector<VideoManager*> observers;
+  int maxCamera;
 };
 
 

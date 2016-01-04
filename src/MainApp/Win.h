@@ -1,7 +1,7 @@
 #ifndef WM_GUI
 #define WM_GUI
 #include <dlib/dlib/gui_widgets.h>
-
+#include "Settings.h"
 
 class Win : public dlib::drawable_window{
 public:
@@ -10,6 +10,8 @@ public:
   dlib::image_widget image;
 
 private:
+  dlib::list_box cameras;
+  void on_camera_select(unsigned long i);
 };
 
 #endif

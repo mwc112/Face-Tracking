@@ -1,7 +1,7 @@
 #include "Settings.h"
 #include <stdio.h>
 #include <iostream>
-
+#include "CameraInput.h"
 
 int Settings::getCamera() {
   return currCamera;
@@ -14,6 +14,10 @@ void Settings::setCamera(int camera) {
   } 
 }
 
+int Settings::getCameraCount(){
+  return maxCamera + 1;
+}
+
 Settings* Settings::getInstance(){
   static Settings instance;
   return &instance;
@@ -21,6 +25,17 @@ Settings* Settings::getInstance(){
 
 Settings::Settings(){
   currCamera = 0;
+  int i = -1;
+  try { 
+    while(true){
+      CameraInput ci = CameraInput(i + 1);
+      ci.getFrame();
+      i += 1;
+    } 
+  } catch (NoInput e) {
+    maxCamera = i;
+  } 
+  
 }
 
 void Settings::addVideoObserver(VideoManager* vm){
