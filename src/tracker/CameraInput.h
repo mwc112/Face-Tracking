@@ -6,6 +6,7 @@
 class CameraInput: public Input {
 public:
     CameraInput();
+    ~CameraInput();
     cv::Mat getFrame();
 private:
     cv::VideoCapture cap;
