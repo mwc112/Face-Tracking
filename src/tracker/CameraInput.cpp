@@ -1,8 +1,8 @@
 #include "CameraInput.h"
 
 using namespace cv;
-CameraInput::CameraInput() {
-    cap = VideoCapture(0);
+CameraInput::CameraInput(int camera) {
+    cap = VideoCapture(camera);
 }
 
 Mat CameraInput::getFrame() {

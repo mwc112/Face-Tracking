@@ -5,7 +5,7 @@
 
 class CameraInput: public Input {
 public:
-    CameraInput();
+    CameraInput(int camera);
     cv::Mat getFrame();
 private:
     cv::VideoCapture cap;

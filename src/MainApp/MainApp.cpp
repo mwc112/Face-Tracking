@@ -5,6 +5,8 @@
 #include<dlib/dlib/opencv.h>
 
 #include "Win.h"
+#include "Settings.h"
+#include "VideoManager.h"
 
 #include "FeatureTracker.h"
 #include "HeadTracker.h"
@@ -55,8 +57,11 @@ void drawFaceOnFrame(Mat frame, Face face) {
 
 int main(int argc, char* argv[])
 {
-    
-    CameraInput ci;
+    Settings* settings = Settings::getInstance();
+
+    VideoManager vm;
+    settings->addVideoObserver(&vm);
+   
     FeatureTracker featureTracker((Features) (Eyes | Nose));
     FeatureAverager featureAverager;
     HeadTracker headTracker;
@@ -67,7 +72,7 @@ int main(int argc, char* argv[])
     Mat frame;
     while (!win.is_closed()) {
         try {
-            frame = ci.getFrame();
+            frame = vm.getFrame();
             Face face = featureTracker.getFeatures(frame);
             drawFaceOnFrame(frame, face);
             Direction dir = headTracker.getDirection(face);
