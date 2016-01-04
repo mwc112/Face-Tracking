@@ -71,11 +71,11 @@ int main(int argc, char* argv[])
             //w_manager.set_focus_screen((wm::Direction)dir);
             cout << directionName(dir) << endl;
             imshow("Demo", frame);
-            waitKey(20);
+            waitKey(1);
         } catch (const char * e) {
             //cout << e << endl;
             imshow("Demo", frame); //show the frame
-            waitKey(20);
+            waitKey(1);
         }
     };
     return 0;
