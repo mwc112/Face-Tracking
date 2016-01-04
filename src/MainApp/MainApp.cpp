@@ -1,6 +1,11 @@
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
+
+#include<dlib/dlib/opencv.h>
+
+#include "Win.h"
+
 #include "FeatureTracker.h"
 #include "HeadTracker.h"
 #include "CameraInput.h"
@@ -55,27 +60,25 @@ int main(int argc, char* argv[])
     FeatureTracker featureTracker((Features) (Eyes | Nose));
     FeatureAverager featureAverager;
     HeadTracker headTracker;
-    namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
     //wm w_manager;
     
+    Win win;   
+    
     Mat frame;
-    frame = ci.getFrame();
-    imshow("Demo", frame);
-    waitKey(20);
-    while (true) {
+    while (!win.is_closed()) {
         try {
             frame = ci.getFrame();
             Face face = featureTracker.getFeatures(frame);
             drawFaceOnFrame(frame, face);
             Direction dir = headTracker.getDirection(face);
+            dlib::cv_image<dlib::bgr_pixel> dlib_frame(frame);
+            win.image.set_image(dlib_frame);
             //w_manager.set_focus_screen((wm::Direction)dir);
             cout << directionName(dir) << endl;
-            imshow("Demo", frame);
-            waitKey(1);
         } catch (const char * e) {
+            dlib::cv_image<dlib::bgr_pixel> dlib_frame(frame);
+            win.image.set_image(dlib_frame);
             //cout << e << endl;
-            imshow("Demo", frame); //show the frame
-            waitKey(1);
         }
     };
     return 0;
