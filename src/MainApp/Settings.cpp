@@ -7,11 +7,21 @@ int Settings::getCamera() {
   return currCamera;
 }
 
+bool Settings::getManager() {
+  return manager;
+}
+ 
 void Settings::setCamera(int camera) {
   currCamera = camera;
   for (int i = 0; i < observers.size(); i++){
     observers[i]->changeVideo(currCamera);
   } 
+}
+
+
+void Settings::toggleManager() {
+  manager = !manager;
+  std::cout << manager << std::endl;
 }
 
 int Settings::getCameraCount(){
@@ -25,6 +35,7 @@ Settings* Settings::getInstance(){
 
 Settings::Settings(){
   currCamera = 0;
+  manager = true;
   int i = -1;
   try { 
     while(true){

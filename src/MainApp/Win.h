@@ -12,6 +12,8 @@ public:
 private:
   dlib::list_box cameras;
   void on_camera_select(unsigned long i);
+  void on_off_clicked();
+  dlib::button off;
 };
 
 #endif

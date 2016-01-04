@@ -7,7 +7,7 @@
 #include <dlib/dlib/array.h>
 
 
-Win::Win() : image(*this), cameras(*this){
+Win::Win() : image(*this), cameras(*this), off(*this){
   Settings* settings = Settings::getInstance();
   set_size(1280,760);
   set_title("MyEye configuration");
@@ -17,18 +17,31 @@ Win::Win() : image(*this), cameras(*this){
     std::cout << str << std::endl; 
     l.push_back(str);
   }
-  cameras.load(l);
-  image.set_pos(200,10);
-  cameras.set_size(50,20);
+  
   dlib::list_box_style_default s;
+  cameras.load(l);
   cameras.set_style(s);
+  cameras.set_size(50,20);
   cameras.set_click_handler(*this,&Win::on_camera_select);
+  
+
+  image.set_pos(200,10);
+
+  off.set_click_handler(*this,&Win::on_off_clicked);
+  off.set_pos(100,10);
+  off.set_name("off");
+
   show();
 } 
 
 void Win::on_camera_select(unsigned long i){
   Settings* settings = Settings::getInstance();
   settings->setCamera(i);
+}
+
+void Win::on_off_clicked(){
+  Settings* settings = Settings::getInstance();
+  settings->toggleManager();
 }
 
 Win::~Win(){	

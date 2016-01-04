@@ -11,14 +11,17 @@ public:
   void setCamera(int camera);
   int getCamera();
   void addVideoObserver(VideoManager* vm);
+  int getCameraCount();
+  void toggleManager();
+  bool getManager();
   Settings(Settings const&) = delete;
   void operator=(Settings const&)  = delete; 
-  int getCameraCount();
 private:
   Settings();
   int currCamera;
   std::vector<VideoManager*> observers;
   int maxCamera;
+  bool manager;
 };
 
 

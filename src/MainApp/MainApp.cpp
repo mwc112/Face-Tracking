@@ -78,8 +78,10 @@ int main(int argc, char* argv[])
             Direction dir = headTracker.getDirection(face);
             dlib::cv_image<dlib::bgr_pixel> dlib_frame(frame);
             win.image.set_image(dlib_frame);
-            //w_manager.set_focus_screen((wm::Direction)dir);
-            cout << directionName(dir) << endl;
+            if (settings->getManager()){
+              //w_manager.set_focus_screen((wm::Direction)dir);
+              cout << directionName(dir) << endl;
+            }
         } catch (const char * e) {
             dlib::cv_image<dlib::bgr_pixel> dlib_frame(frame);
             win.image.set_image(dlib_frame);
