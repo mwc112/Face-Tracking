@@ -1,6 +1,13 @@
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
+
+#include<dlib/dlib/opencv.h>
+
+#include "Win.h"
+#include "Settings.h"
+#include "VideoManager.h"
+
 #include "FeatureTracker.h"
 #include "HeadTracker.h"
 #include "CameraInput.h"
@@ -32,27 +39,36 @@ void signalHandler(int signum) {
 int main(int argc, char* argv[])
 {
     signal(SIGINT, signalHandler);  
-    CameraInput ci;
+    Settings* settings = Settings::getInstance();
+
+    VideoManager vm;
+    settings->addVideoObserver(&vm);
+   
     FeatureTracker featureTracker;
+
     HeadTracker headTracker;
-    namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
     //wm w_manager;
     
+    Win win;   
+    
     Mat frame;
-    while (true) {
+
+    while (!win.is_closed()) {
         try {
-            frame = ci.getFrame();
+            frame = vm.getFrame();
             Face face = featureTracker.getFeatures(frame);
             drawFaceOnFrame(frame, face);
             Direction dir = headTracker.getDirection(face);
-            //w_manager.set_focus_screen((wm::Direction)dir);
-            cout << directionName(dir) << endl;
-            imshow("Demo", frame);
-            waitKey(1);
+            dlib::cv_image<dlib::bgr_pixel> dlib_frame(frame);
+            win.image.set_image(dlib_frame);
+            if (settings->getManager()){
+              //w_manager.set_focus_screen((wm::Direction)dir);
+              cout << directionName(dir) << endl;
+            }
         } catch (const char * e) {
+            dlib::cv_image<dlib::bgr_pixel> dlib_frame(frame);
+            win.image.set_image(dlib_frame);
             //cout << e << endl;
-            imshow("Demo", frame); //show the frame
-            waitKey(1);
         } catch (NoInput e) {
             cout << "No Camera detected, exiting.." << endl;
             exit(0);
@@ -71,6 +87,6 @@ string directionName(Direction dir) {
         case Middle: return "middle";
         case Unknown: return "unknown";
     }
-    throw "lol";
+    return "unknown";
 }
 

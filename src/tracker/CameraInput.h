@@ -5,11 +5,12 @@
 
 class CameraInput: public Input {
 public:
-    CameraInput();
+    CameraInput(int camera);
     ~CameraInput();
     cv::Mat getFrame();
 private:
     cv::VideoCapture cap;
+    int camera;
 };
 
 #endif

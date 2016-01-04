@@ -14,9 +14,6 @@ add_definitions ("-Wno-deprecated-register")
 set(DLIB_USE_BLAS 0)
 set(DLIB_USE_LAPACK 0)
 
-#we don't need GUI support from dlib
-set(DLIB_NO_GUI_SUPPORT 1)
-
 #makes face detection run faster
 set(USE_SSE4_INSTRUCTIONS 1)
 
