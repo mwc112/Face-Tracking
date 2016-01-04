@@ -1,26 +1,16 @@
 #include "FeatureTracker.h"
-
-#include <iostream>
-#include <stdio.h>
-#include <time.h>
 #include <dlib/opencv.h>
 
 using namespace cv;
 using namespace std;
 
-Rect estimateNoseRegion(Rect faceRect);
-Rect estimateEyesRegion(Rect faceRect);
 void equalizeFrame(Mat &frame);
-void getRightEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &rightEye);
-void getLeftEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &leftEye);
-void selectNose(vector <Rect> noses, Rect &nose);
-
 
 Rect rectangle_to_rect(dlib::rectangle r){
     return Rect(r.left(), r.top(), r.width(), r.height());
 }
 
-FeatureTracker::FeatureTracker(Features features) : requiredFeatures(features) {
+FeatureTracker::FeatureTracker() {
     detector = dlib::get_frontal_face_detector();
     dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> sp;
 }
@@ -30,13 +20,18 @@ Face FeatureTracker::findFeaturesInFace(Mat head, dlib::rectangle faceRect) {
     dlib::cv_image<dlib::bgr_pixel> cimg(head);
     dlib::full_object_detection shape = sp(cimg, faceRect);
     
+    Point offset;
+    Size wholesize;
+    head.locateROI(wholesize, offset);
+    
     std::array<Point, 68> landmarks;
-    for (int i = 0; i < shape.num_parts(); i++){
-        landmarks[i] = (Point(shape.part(i).x(), shape.part(i).y()));
+    for (int i = 0; i < shape.num_parts(); i++) {
+        landmarks[i] = Point(shape.part(i).x(), shape.part(i).y()) + offset;
     }   
- 
+   
+    
     Face face;
-    face.face = rectangle_to_rect(faceRect);
+    face.face = rectangle_to_rect(faceRect) + offset;
     face.landmarks = landmarks;
     return face;
 }
@@ -44,8 +39,16 @@ Face FeatureTracker::findFeaturesInFace(Mat head, dlib::rectangle faceRect) {
 
 Face FeatureTracker::getFeatures(Mat frame) {
     
-    Mat head = frame(prevhead);
-    
+    //use try/catch because this is best effort  
+    Mat head;
+    Rect frameRect = Rect(0,0,frame.size().width, frame.size().height);
+    try {
+        head = frame(prevhead & frameRect);
+    } catch (...) {
+        prevhead = frameRect;
+        head = frame;
+    }
+   
     dlib::cv_image<dlib::bgr_pixel> cimg(head);
     vector<dlib::rectangle> dets = detector(cimg);
     if (dets.size() >= 1) {
@@ -55,6 +58,8 @@ Face FeatureTracker::getFeatures(Mat frame) {
         dlib::cv_image<dlib::bgr_pixel> frameimage(frame);
         dets = detector(frameimage);
         if (dets.size() >= 1) {
+            cout << dets[0] << endl;
+            prevhead = rectangle_to_rect(dets[0]);
             return findFeaturesInFace(frame, dets[0]);
         }
         //we throw an exception here because we don't have a face to return this frame.
