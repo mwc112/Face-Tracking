@@ -58,7 +58,6 @@ Face FeatureTracker::getFeatures(Mat frame) {
         dlib::cv_image<dlib::bgr_pixel> frameimage(frame);
         dets = detector(frameimage);
         if (dets.size() >= 1) {
-            cout << dets[0] << endl;
             prevhead = rectangle_to_rect(dets[0]);
             return findFeaturesInFace(frame, dets[0]);
         }
