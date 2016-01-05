@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
             face.drawOnFrame(frame);
             Direction dir = headTracker.getDirection(face);
             win.image.set_image(frame.dlibImage());
+            win.set_focus(dir);
             if (settings->getTrackingState()){
               //w_manager.set_focus_screen((wm::Direction)dir);
               cout << directionName(dir) << endl;

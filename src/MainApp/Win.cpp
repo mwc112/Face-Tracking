@@ -7,7 +7,7 @@
 #include <dlib/dlib/array.h>
 
 
-Win::Win() : image(*this), cameras(*this), off(*this){
+Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detection_label(*this){
   Settings* settings = Settings::getInstance();
   set_size(1280,760);
   set_title("MyEye configuration");
@@ -23,9 +23,16 @@ Win::Win() : image(*this), cameras(*this), off(*this){
   cameras.set_style(s);
   cameras.set_size(50,20);
   cameras.set_click_handler(*this,&Win::on_camera_select);
-  
+ 
+  detection_label.set_pos(10, 260);
+  detection_label.set_text("No Detection"); 
 
-  image.set_pos(200,10);
+  grid.set_pos(10,50);
+  grid.set_size(200,200);
+  grid.construct_grid();
+   
+
+  image.set_pos(220,10);
 
   off.set_click_handler(*this,&Win::on_off_clicked);
   off.set_pos(100,10);
@@ -54,4 +61,19 @@ Win::~Win(){
   close_window();
 }
 
+std::string directionName(Direction d);
 
+void Win::set_focus(Direction d){
+  switch (d){
+    case Left : {grid.set_focus(0,0);
+    detection_label.set_text(directionName(d));
+    break;
+    };
+    case Right : {grid.set_focus(1,0);
+    detection_label.set_text(directionName(d));
+    break;
+    };
+    case Middle :{};
+    case Unknown : {};
+  } 
+}

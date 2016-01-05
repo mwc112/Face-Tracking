@@ -5,11 +5,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include <array>
 #include "Frame.h"
-
-const cv::Scalar WHITE_COLOR(255, 225, 255);
-const cv::Scalar CYAN_COLOR(255, 225, 0);
-const cv::Scalar YELLOW_COLOR(0, 225, 255);
-const cv::Scalar RED_COLOR(0,0,255);
+#include "Color.h"
 
 struct Range {
     int min, max;
