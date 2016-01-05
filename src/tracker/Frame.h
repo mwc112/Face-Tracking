@@ -18,6 +18,9 @@ struct Frame {
     operator cv::Mat& () {
         return mat;
     }
+    operator cv::_InputOutputArray () const {
+        return mat;
+    }
     operator dlib::cv_image<dlib::bgr_pixel> () const {
         return dlib::cv_image<dlib::bgr_pixel>(mat);
     }
