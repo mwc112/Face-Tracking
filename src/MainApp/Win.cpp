@@ -7,7 +7,7 @@
 #include <dlib/dlib/array.h>
 
 
-Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detection_label(*this){
+Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detection_label(*this), flip_frame(*this){
   Settings* settings = Settings::getInstance();
   set_size(1280,760);
   set_title("MyEye configuration");
@@ -35,9 +35,13 @@ Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detecti
   image.set_pos(220,10);
 
   off.set_click_handler(*this,&Win::on_off_clicked);
-  off.set_pos(100,10);
+  off.set_pos(50,10);
   off.set_name("off");
 
+  flip_frame.set_click_handler(*this,&Win::on_flip_clicked);
+  flip_frame.set_pos(100,10);
+  flip_frame.set_name("flip");
+ 
   show();
 } 
 
@@ -47,7 +51,14 @@ void Win::on_camera_select(unsigned long i){
     settings->setCamera(i);
   }
 }
-
+void Win::on_flip_clicked(){
+  Settings* settings = Settings::getInstance();
+  if (settings->toggleFlipFrame()) {
+    off.set_name("flip");
+  } else {
+    off.set_name("unflip");
+  }
+}
 void Win::on_off_clicked(){
   Settings* settings = Settings::getInstance();
   if (settings->toggleTrackingState()) {

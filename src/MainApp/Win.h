@@ -15,7 +15,8 @@ private:
   dlib::list_box cameras;
   void on_camera_select(unsigned long i);
   void on_off_clicked();
-  dlib::toggle_button off;
+  void on_flip_clicked();
+  dlib::toggle_button off, flip_frame;
   dlib::label detection_label;
   grid_widget grid;
 };

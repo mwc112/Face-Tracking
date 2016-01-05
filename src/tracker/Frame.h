@@ -28,6 +28,10 @@ struct Frame {
     }
     dlib::cv_image<dlib::bgr_pixel> dlibImage() {
         return dlib::cv_image<dlib::bgr_pixel>(mat);
-    }
+    } 
+    void flip(){
+      cv::flip(mat,mat, 1);
+      std::cout << "flipping" << std::endl;
+    } 
 };
 #endif

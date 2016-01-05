@@ -7,11 +7,13 @@ class VideoManager{
 
 public:
   Frame getFrame();
+  void flipFrame(bool);
   void changeVideo(int camera);
   void changeVideo(std::string path);
   VideoManager();
 private:
   Input* ci = NULL;
+  bool flip;
 };
 
 #endif

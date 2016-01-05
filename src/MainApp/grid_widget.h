@@ -10,8 +10,8 @@ public:
   void set_focus(int x, int y);
   void construct_grid();
 private:
-  Colour hilightColor = RED_COLOR;
-  Colour lowlightColor = WHITE_COLOR;
+  Colour hilightColor = WHITE_COLOR;
+  Colour lowlightColor = RED_COLOR;
   int cols;
   int rows;
 };

@@ -21,8 +21,15 @@ void Settings::setCamera(int camera) {
 
 bool Settings::toggleTrackingState() {
   trackingState = !trackingState;
-  std::cout << trackingState << std::endl;
   return trackingState;
+}
+
+bool Settings::toggleFlipFrame() {
+  flipFrame = !flipFrame;
+  for (int i = 0; i < observers.size(); i++){
+    observers[i]->flipFrame(flipFrame);
+  } 
+  return flipFrame;
 }
 
 int Settings::getCameraCount(){
@@ -37,6 +44,7 @@ Settings* Settings::getInstance(){
 Settings::Settings(){
   currCamera = 0;
   trackingState = true;
+  flipFrame = true;
   int i = -1;
   try { 
     while(true){
@@ -52,5 +60,6 @@ Settings::Settings(){
 
 void Settings::addVideoObserver(VideoManager* vm){
   vm->changeVideo(currCamera);
+  vm->flipFrame(flipFrame);
   observers.push_back(vm);  
 }

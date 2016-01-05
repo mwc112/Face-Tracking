@@ -23,7 +23,7 @@ void grid_widget::construct_grid(){
       int t = i*h; 
       int r = l + w;
       int b = t + h;
-      rects.push_back(overlay_rect(dlib::rectangle(l,t,r,b), (dlib::rgb_alpha_pixel)hilightColor));    
+      rects.push_back(overlay_rect(dlib::rectangle(l,t,r,b), (dlib::rgb_alpha_pixel)lowlightColor));    
     }
   }
   

@@ -15,7 +15,16 @@
 #include <stdio.h>
 
 Frame VideoManager::getFrame(){
-  return ci->getFrame();
+  Frame f = ci->getFrame();
+  if (flip){
+    f.flip();
+  }
+  return f;
+}
+
+void VideoManager::flipFrame(bool f){
+  flip = f;
+  std::cout << "flip" << flip << std::endl;
 }
 
 void VideoManager::changeVideo(int camera){
@@ -28,3 +37,4 @@ void VideoManager::changeVideo(std::string path){
 
 VideoManager::VideoManager(){
 }
+ 
