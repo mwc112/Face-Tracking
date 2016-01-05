@@ -24,7 +24,6 @@ Frame VideoManager::getFrame(){
 
 void VideoManager::flipFrame(bool f){
   flip = f;
-  std::cout << "flip" << flip << std::endl;
 }
 
 void VideoManager::changeVideo(int camera){

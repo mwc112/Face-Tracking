@@ -31,7 +31,6 @@ struct Frame {
     } 
     void flip(){
       cv::flip(mat,mat, 1);
-      std::cout << "flipping" << std::endl;
     } 
 };
 #endif

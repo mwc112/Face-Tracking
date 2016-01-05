@@ -53,6 +53,7 @@ Direction directionFromNoseRidge(Face face) {
     } else if (m > threshold){
         return Right;
     }
+    return Unknown;
 }
 string directionName(Direction dir);
 

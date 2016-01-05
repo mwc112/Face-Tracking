@@ -14,7 +14,6 @@ Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detecti
   dlib::array<std::string> l;
   for (int i = 0; i < settings->getCameraCount();  i++){
     auto str = std::to_string(i);
-    std::cout << str << std::endl; 
     l.push_back(str);
   }
   
