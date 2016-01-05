@@ -18,9 +18,11 @@ struct Frame {
     operator cv::Mat& () {
         return mat;
     }
+#if CV_MAJOR_VERSION == 3
     operator cv::_InputOutputArray () const {
         return mat;
     }
+#endif
     operator dlib::cv_image<dlib::bgr_pixel> () const {
         return dlib::cv_image<dlib::bgr_pixel>(mat);
     }
