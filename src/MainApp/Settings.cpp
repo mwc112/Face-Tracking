@@ -44,7 +44,7 @@ Settings* Settings::getInstance(){
 Settings::Settings(){
   currCamera = 0;
   trackingState = true;
-  flipFrame = true;
+  flipFrame = false;
   int i = -1;
   try { 
     while(true){

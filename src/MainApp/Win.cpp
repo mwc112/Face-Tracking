@@ -54,9 +54,9 @@ void Win::on_camera_select(unsigned long i){
 void Win::on_flip_clicked(){
   Settings* settings = Settings::getInstance();
   if (settings->toggleFlipFrame()) {
-    off.set_name("flip");
+    flip_frame.set_name("unflip");
   } else {
-    off.set_name("unflip");
+    flip_frame.set_name("flip");
   }
 }
 void Win::on_off_clicked(){
