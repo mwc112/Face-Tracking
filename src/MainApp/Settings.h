@@ -14,6 +14,7 @@ public:
   int getCameraCount();
   bool toggleTrackingState();
   bool toggleFlipFrame();
+  bool toggleEqualiseFrame();
   bool getTrackingState();
   Settings(Settings const&) = delete;
   void operator=(Settings const&)  = delete; 
@@ -22,7 +23,7 @@ private:
   int currCamera;
   std::vector<VideoManager*> observers;
   int maxCamera;
-  bool trackingState, flipFrame;
+  bool trackingState, flipFrame, equaliseFrame;
 };
 
 

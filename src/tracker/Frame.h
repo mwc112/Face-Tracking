@@ -32,5 +32,20 @@ struct Frame {
     void flip(){
       cv::flip(mat,mat, 1);
     } 
+    void equaliseFrame() {
+      //this should help in high contrast settings (eg if a window is behind you)
+      //equalize the Value channel
+      cv::Mat channels[3];
+      //convert to HSV from RGB
+      cv::cvtColor(mat, mat, CV_RGB2HSV);
+      //split into H, S and V channels
+      cv::split(mat, channels);
+      //equalize only the V channel.
+      cv::equalizeHist(channels[2], channels[2]);
+      //remerge
+      cv::merge(channels, 3, mat);
+      //convert back to RGB
+      cv::cvtColor(mat, mat, CV_HSV2RGB);
+    }
 };
 #endif

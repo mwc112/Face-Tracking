@@ -19,11 +19,17 @@ Frame VideoManager::getFrame(){
   if (flip){
     f.flip();
   }
+  if (equalise){
+    f.equaliseFrame();
+  }
   return f;
 }
 
 void VideoManager::flipFrame(bool f){
   flip = f;
+}
+void VideoManager::equaliseFrame(bool f){
+  equalise = f;
 }
 
 void VideoManager::changeVideo(int camera){
