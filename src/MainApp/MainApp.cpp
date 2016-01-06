@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
     FeatureTracker featureTracker;
 
     HeadTracker headTracker;
-    //wm w_manager;
+    wm w_manager;
     
     Win win;   
     
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
             win.image.set_image(frame.dlibImage());
             win.set_focus(dir);
             if (settings->getTrackingState()){
-              //w_manager.set_focus_screen((wm::Direction)dir);
+              w_manager.set_focus_screen((wm::Direction)dir);
               cout << directionName(dir) << endl;
             }
         } catch (const char * e) {
