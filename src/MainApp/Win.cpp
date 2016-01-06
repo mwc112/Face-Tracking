@@ -7,7 +7,7 @@
 #include <dlib/dlib/array.h>
 
 
-Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detection_label(*this), flip_frame(*this){
+Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 2,2), detection_label(*this), flip_frame(*this){
   Settings* settings = Settings::getInstance();
   set_size(1280,760);
   set_title("MyEye configuration");
@@ -75,15 +75,30 @@ std::string directionName(Direction d);
 
 void Win::set_focus(Direction d){
   switch (d){
-    case Left : {grid.set_focus(0,0);
-    detection_label.set_text(directionName(d));
-    break;
+    case Top_Left : {grid.set_focus(0,0);
+      detection_label.set_text(directionName(d));
+      break;
     };
-    case Right : {grid.set_focus(1,0);
-    detection_label.set_text(directionName(d));
-    break;
+      case Top_Right : {grid.set_focus(1,0);
+      detection_label.set_text(directionName(d));
+      break;
     };
-    case Middle :{};
-    case Unknown : {};
+    case Top_Middle :{
+      break;
+    };
+    case Bottom_Left : {grid.set_focus(0,1);
+      detection_label.set_text(directionName(d));
+      break;
+    };
+    case Bottom_Right : {grid.set_focus(1,1);
+      detection_label.set_text(directionName(d));
+     break;
+    };
+    case Bottom_Middle :{
+      break;
+    };
+    case Unknown : {
+      break;
+    };
   } 
 }

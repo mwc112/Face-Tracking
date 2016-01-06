@@ -17,9 +17,31 @@ Point convert(point p) {
     return Point(p.x(), p.y());
 }
 
+string directionName(Direction dir){
+    switch (dir) {
+        case Top_Left: return "top left";
+        case Top_Right: return "top right";
+        case Top_Middle: return "top middle";
+        case Bottom_Left: return "bottom left";
+        case Bottom_Right: return "bottom right";
+        case Bottom_Middle: return "bottom middle";
+        case Unknown: return "unknown";
+    }
+    return "unknown";
+}
 
+enum LR{
+  Left,
+  Middle,
+  Right
+};
+enum TB{
+  Top,
+  Mid,
+  Bottom
+};
 
-Direction directionFromEyesToEdge(Face face) {
+LR directionFromEyesToEdge(Face face) {
     auto outerRightEye = convert(face.landmarks[36]), outerLeftEye = convert(face.landmarks[45]);
     auto rightFaceSide = convert(face.landmarks[0]), leftFaceSide = convert(face.landmarks[16]);
     auto rightDistance = dlib::length(outerRightEye - rightFaceSide);
@@ -32,7 +54,7 @@ Direction directionFromEyesToEdge(Face face) {
     return Middle;
 }
 
-Direction directionFromNoseRidge(Face face) {
+LR directionFromNoseRidge(Face face) {
     point noseBottom = convert(face.landmarks[30]);
     point noseTop = convert(face.landmarks[27]);
     
@@ -53,18 +75,77 @@ Direction directionFromNoseRidge(Face face) {
     } else if (m > threshold){
         return Right;
     }
-    return Unknown;
 }
-string directionName(Direction dir);
+
+TB directionFromEyeBrow(Face face){
+    //TODO make relative
+    auto upperRightEye = convert(face.landmarks[19]); 
+    auto rightEyebrow = convert(face.landmarks[37]);
+    auto distance = dlib::length(upperRightEye - rightEyebrow);
+  
+    if (distance > 41) {
+        return Top;
+        std::cout << "t" << distance << std::endl;
+    } else if (distance < 39) {
+        return Bottom;
+        std::cout << "b" << distance << std::endl;
+    }
+    return Mid;
+
+}
+
+
+Direction votesToDirection(std::vector<LR> LRVotes, std::vector<TB> TBVotes, Direction currentDirection){
+  bool sameLR = true;
+  bool sameTB = true;
+  for (int i = 0; i < LRVotes.size(); i++){
+      sameLR &= (LRVotes[i] == LRVotes[0]);
+  }
+  for (int i = 0; i < TBVotes.size(); i++){
+      sameTB &= (TBVotes[i] == TBVotes[0]);
+  }
+  if  (sameLR && sameTB){
+    switch(TBVotes[0]){
+      case (Top) : {
+        switch(LRVotes[0]){
+          case (Left) : {
+            return Top_Left;        
+          }
+          case (Middle) : {
+            return Top_Middle;        
+          }
+          case (Right) : {
+            return Top_Right;        
+          }
+        }
+      }
+      case (Bottom) : {
+        switch(LRVotes[0]){
+          case (Left) : {
+            return Bottom_Left;        
+          }
+          case (Middle) : {
+            return Bottom_Middle;        
+          }
+          case (Right) : {
+            return Bottom_Right;        
+          }
+        }
+      }
+    }
+  }
+  return currentDirection;
+}
 
 Direction HeadTracker::getDirection(Face face) {
+    std::vector<LR> LRVotes;
+    std::vector<TB> TBVotes;    
     Direction newDirection = currentDirection;
-    Direction eyesDir = directionFromEyesToEdge(face);
-    Direction noseDir = directionFromNoseRidge(face);
-    
-    if (noseDir == eyesDir) {
-        newDirection = noseDir;
-    }
+    LRVotes.push_back(directionFromEyesToEdge(face));
+    LRVotes.push_back(directionFromNoseRidge(face));
+    TBVotes.push_back(directionFromEyeBrow(face)); 
+   
+    newDirection = votesToDirection(LRVotes, TBVotes, currentDirection);
 
     if (newDirection != currentDirection) {
         currentDirection = newDirection;
@@ -73,3 +154,5 @@ Direction HeadTracker::getDirection(Face face) {
         throw "No new direction";
     }
 }
+
+

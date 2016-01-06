@@ -67,13 +67,4 @@ int main(int argc, char* argv[])
 
 
 
-string directionName(Direction dir) {
-    switch (dir) {
-        case Left: return "left";
-        case Right: return "right";
-        case Middle: return "middle";
-        case Unknown: return "unknown";
-    }
-    return "unknown";
-}
 
