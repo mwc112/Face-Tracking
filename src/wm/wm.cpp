@@ -34,16 +34,33 @@ void wm::print_attr(Display* d, Window *children_windows, XWindowAttributes *att
 void wm::set_focus_screen(Direction direction){
     Display *d = XOpenDisplay(NULL);
     Screen *s = DefaultScreenOfDisplay(d);
-    int w = s->width / 2;
+    int w = s->width;
     int h = s->height;
-    if(direction == Left){
-        set_focus_to(d, w/2, h/2);
-    }
-    else if(direction == Middle){
-        set_focus_to(d, w + w/2, h/2);
-    }
-    else if(direction == Right){
-        set_focus_to(d, w*2 - w/2, h/2);
+    switch(direction){
+      case(Top_Left):{
+          set_focus_to(d, (w/6), h/4);
+          break;
+      }
+      case(Top_Middle):{
+          set_focus_to(d, 3*(w/6), h/4);
+          break;
+      }
+      case(Top_Right):{
+          set_focus_to(d, 5*(w/6) , h/4);
+          break;
+      }
+      case(Bottom_Left):{
+          set_focus_to(d, w/6, 3*(h/4));
+          break;
+      }
+      case(Bottom_Middle):{
+          set_focus_to(d, 3*(w/6), 3*(h/4));
+          break;
+      }
+      case(Bottom_Right):{
+          set_focus_to(d, 5*(w/6), 3*(h/4));
+          break;
+      }
     }
     XCloseDisplay(d);
 }

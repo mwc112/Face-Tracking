@@ -15,9 +15,12 @@ private:
 
 public:
 	typedef enum Direction {
-	    Left,
-	    Middle,
-	    Right,
+	    Top_Left,
+	    Top_Middle,
+	    Top_Right,
+	    Bottom_Left,
+	    Bottom_Middle,
+	    Bottom_Right,
 	    Unknown
 	} Direction;
 
