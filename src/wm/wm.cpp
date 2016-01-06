@@ -36,13 +36,13 @@ void wm::set_focus_screen(Direction direction){
     Screen *s = DefaultScreenOfDisplay(d);
     int w = s->width / 2;
     int h = s->height;
-    if(direction == Right){
+    if(direction == Left){
         set_focus_to(d, w/2, h/2);
     }
     else if(direction == Middle){
         set_focus_to(d, w + w/2, h/2);
     }
-    else if(direction == Left){
+    else if(direction == Right){
         set_focus_to(d, w*2 - w/2, h/2);
     }
     XCloseDisplay(d);
