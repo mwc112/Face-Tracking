@@ -1,108 +1,70 @@
 #include "FeatureTracker.h"
-#include <iostream>
-#include <stdio.h>
-#include <time.h>
-
-#define DISPLAY
+#include <dlib/opencv.h>
 
 using namespace cv;
 using namespace std;
 
-
-Rect estimateNoseRegion(Rect faceRect);
-Rect estimateEyesRegion(Rect faceRect);
 void equalizeFrame(Mat &frame);
-void getRightEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &rightEye);
-void getLeftEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &leftEye);
-void selectNose(vector <Rect> noses, Rect &nose);
 
-
-FeatureTracker::FeatureTracker(Features features) : requiredFeatures(features) {
-    bool loaded = true; 
-    loaded &= faceCascade.load("cascades/haarcascade_frontalface_alt.xml");
-    loaded &= lefteyeCascade.load("cascades/haarcascade_lefteye_2splits.xml");
-    loaded &= righteyeCascade.load("cascades/haarcascade_righteye_2splits.xml");
-    loaded &= noseCascade.load("cascades/haarcascade_mcs_nose.xml");
-    if (!loaded){
-        throw "cascades not loaded";
-    }
+Rect rectangle_to_rect(dlib::rectangle r){
+    return Rect(r.left(), r.top(), r.width(), r.height());
 }
 
-Face FeatureTracker::findFeaturesInFace(Mat head, Rect faceRect) {
-    Rect eyesRegion = estimateEyesRegion(faceRect);
-    Rect noseRegion = estimateNoseRegion(faceRect);
-    
-    //Eyes works better when looking at the whole head,
-    //but with the size constraint of the eyeRegion.
-    Mat eyesROI = head;
-    Mat noseROI = head(noseRegion);
-    
-    //exprimentally a lower minNeighbours gives a higher feature find rate, is the best.
-    auto minN = 1;
+FeatureTracker::FeatureTracker() {
+    detector = dlib::get_frontal_face_detector();
+    dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> sp;
+}
+
+Face FeatureTracker::findFeaturesInFace(Mat head, dlib::rectangle faceRect) {
     //detection
-    vector<Rect> noses, rightEyes, leftEyes;
-    noseCascade.detectMultiScale(noseROI, noses,
-                                 1.1, minN, 0,
-                                 Size(0,noseRegion.height/2), noseRegion.size());
-    righteyeCascade.detectMultiScale(eyesROI, rightEyes,
-                                     1.1, minN, CASCADE_SCALE_IMAGE,
-                                     Size(0,eyesRegion.height/2), eyesRegion.size());
-    lefteyeCascade.detectMultiScale(eyesROI, leftEyes,
-                                    1.1, minN, CASCADE_SCALE_IMAGE,
-                                    Size(0,eyesRegion.height/2), eyesRegion.size());
+    dlib::cv_image<dlib::bgr_pixel> cimg(head);
+    dlib::full_object_detection shape = sp(cimg, faceRect);
     
     Point offset;
     Size wholesize;
-    
     head.locateROI(wholesize, offset);
+    
+    std::array<Point, 68> landmarks;
+    for (int i = 0; i < shape.num_parts(); i++) {
+        landmarks[i] = Point(shape.part(i).x(), shape.part(i).y()) + offset;
+    }   
+   
+    
     Face face;
-    face.face = faceRect + offset;
-    getLeftEye(leftEyes, rightEyes, eyesROI.size().width/2, face.leftEye);
-    getRightEye(leftEyes, rightEyes, eyesROI.size().width/2, face.rightEye);
-    selectNose(noses, face.nose);
-    face.nose += noseRegion.tl() + offset;
-    face.leftEye += offset;
-    face.rightEye += offset;
+    face.face = rectangle_to_rect(faceRect) + offset;
+    face.landmarks = landmarks;
     return face;
 }
 
+
 Face FeatureTracker::getFeatures(Mat frame) {
-    vector<Rect> faces;
     
-    Mat head = frame(prevhead);
-    
-    faceCascade.detectMultiScale(head, faces,
-                                 1.1, 3, CASCADE_SCALE_IMAGE);
-    if (faces.size() >= 1) {
-        return findFeaturesInFace(head, faces[0]);
+    //use try/catch because this is best effort  
+    Mat head;
+    Rect frameRect = Rect(0,0,frame.size().width, frame.size().height);
+    try {
+        head = frame(prevhead & frameRect);
+    } catch (...) {
+        prevhead = frameRect;
+        head = frame;
+    }
+   
+    dlib::cv_image<dlib::bgr_pixel> cimg(head);
+    vector<dlib::rectangle> dets = detector(cimg);
+    if (dets.size() >= 1) {
+        return findFeaturesInFace(head, dets[0]);
     }  else {
         //If we lose the face, recalculate from scratch
-        faceCascade.detectMultiScale(frame, faces,
-                                     1.1, 3, CASCADE_SCALE_IMAGE);
-        if (faces.size()) {
-            prevhead = faces[0];
-            return findFeaturesInFace(frame, prevhead);
+        dlib::cv_image<dlib::bgr_pixel> frameimage(frame);
+        dets = detector(frameimage);
+        if (dets.size() >= 1) {
+            prevhead = rectangle_to_rect(dets[0]);
+            return findFeaturesInFace(frame, dets[0]);
         }
         //we throw an exception here because we don't have a face to return this frame.
         //TODO throw sensible exception
         throw "feature";
     }
-}
-
-Rect estimateNoseRegion(Rect faceRect) {
-    Rect noseRect = faceRect;
-    noseRect.y += 2*noseRect.height/9;
-    noseRect.height /= 2;
-    noseRect.x += noseRect.width/4;
-    noseRect.width /= 2;
-    return noseRect;
-}
-
-Rect estimateEyesRegion(Rect faceRect) {
-    Rect eyesRect = faceRect;
-    eyesRect.y += 2*eyesRect.height/9;
-    eyesRect.height /= 3;
-    return eyesRect;
 }
 
 
@@ -122,38 +84,3 @@ void equalizeFrame(Mat &frame) {
     cvtColor(frame, frame, CV_HSV2RGB);
 }
 
-void getRightEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &rightEye) {
-    for (auto eye: rightEyes) {
-        if (eye.br().x <= border) {
-            rightEye = eye;
-            return;
-        }
-    }
-    for (auto eye: leftEyes) {
-        if (eye.br().x <= border) {
-            rightEye = eye;
-            return;
-        }
-    }
-}
-void getLeftEye(vector<Rect> leftEyes, vector<Rect> rightEyes, int border, Rect &leftEye) {
-    for (auto eye: leftEyes) {
-        if (eye.tl().x >= border) {
-            leftEye = eye;
-            return;
-        }
-    }
-    for (auto eye: rightEyes) {
-        if (eye.tl().x >= border) {
-            leftEye = eye;
-            return;
-        }
-    }
-}
-
-
-void selectNose(vector <Rect> noses, Rect &nose) {
-    if (noses.size()) {
-        nose = noses[0];
-    }
-}

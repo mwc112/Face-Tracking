@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 SET(CMAKE_CXX_FLAGS "-std=c++11")
-
 project( MainAppParent)
 
 add_subdirectory(lib/googletest/googletest)
@@ -11,6 +10,7 @@ if(xlib AND NOT APPLE)
 else()
 	add_subdirectory(wm-nox11)
 endif()
+
 add_subdirectory(tracker)
 add_subdirectory(MainApp)
 

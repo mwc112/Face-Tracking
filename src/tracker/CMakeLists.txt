@@ -7,10 +7,22 @@ find_package( OpenCV REQUIRED )
 
 file(GLOB Tracker_SRC "*.h" "*.cpp")
 
+#needed because image lib's used by dlib output this warning a lot
+add_definitions ("-Wno-deprecated-register")
+
+#needed to work on lab machines because http://intel.ly/15OrBec
+set(DLIB_USE_BLAS 0)
+set(DLIB_USE_LAPACK 0)
+
+#makes face detection run faster
+set(USE_SSE4_INSTRUCTIONS 1)
+
+include(dlib/dlib/cmake)
+
 add_library(Tracker ${Tracker_SRC})
 target_include_directories(Tracker PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(Tracker ${OpenCV_LIBS})
+target_link_libraries(Tracker ${OpenCV_LIBS} dlib)
 
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

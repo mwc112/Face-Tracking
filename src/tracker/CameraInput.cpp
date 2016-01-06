@@ -1,20 +1,21 @@
 #include "CameraInput.h"
+#include <string>
 
 using namespace cv;
-CameraInput::CameraInput() {
-    cap = VideoCapture(0);
+CameraInput::CameraInput(int camera) : camera(camera){
+    cap = VideoCapture(camera);
 }
 
 CameraInput::~CameraInput() {
     cap.release();
 }
 
-Mat CameraInput::getFrame() {
+Frame CameraInput::getFrame() {
     Mat mat;
     if (cap.read(mat)) {
         return mat;
     } else {
-        throw NoInput("camera", "0");
+        throw NoInput("camera", std::to_string(camera));
     }
     
 }

@@ -29,9 +29,7 @@
 Demo
 
 #because cmake
-*.cmake
 Makefile
-CMake*
 
 #temp
 runUnitTests

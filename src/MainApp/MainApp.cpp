@@ -1,11 +1,17 @@
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
+
+#include "Win.h"
+#include "Settings.h"
+#include "VideoManager.h"
+
 #include "FeatureTracker.h"
 #include "HeadTracker.h"
 #include "CameraInput.h"
 #include "wm.h"
 #include <csignal>
+#include "Frame.h"
 
 using namespace std;
 using namespace cv;
@@ -18,29 +24,41 @@ void signalHandler(int signum) {
 }
 
 
+
 int main(int argc, char* argv[])
 {
     signal(SIGINT, signalHandler);  
-    CameraInput ci;
-    FeatureTracker featureTracker((Features) (Eyes | Nose));
+    Settings* settings = Settings::getInstance();
+
+    VideoManager vm;
+    settings->addVideoObserver(&vm);
+   
+    FeatureTracker featureTracker;
+
     HeadTracker headTracker;
-    wm w_manager;
-    namedWindow("Demo",CV_WINDOW_AUTOSIZE); //create a window
+    //wm w_manager;
     
-    Mat frame;
-    while (true) {
+    Win win;   
+    
+    Frame frame;
+    while (!win.is_closed()) {
         try {
-            frame = ci.getFrame();
+            frame = vm.getFrame();
             Face face = featureTracker.getFeatures(frame);
             face.drawOnFrame(frame);
             Direction dir = headTracker.getDirection(face);
-            w_manager.set_focus_screen((wm::Direction)dir);
-            cout << directionName(dir) << endl;
-            imshow("Demo", frame);
-            waitKey(20);
+            win.image.set_image(frame.dlibImage());
+            win.set_focus(dir);
+            if (settings->getTrackingState()){
+              //w_manager.set_focus_screen((wm::Direction)dir);
+              cout << directionName(dir) << endl;
+            }
         } catch (const char * e) {
-            imshow("Demo", frame);
-            waitKey(20);
+            win.image.set_image(frame.dlibImage());
+            //cout << e << endl;
+        } catch (NoInput e) {
+            cout << "No Camera detected, exiting.." << endl;
+            exit(0);
         }
     };
     return 0;
@@ -56,5 +74,6 @@ string directionName(Direction dir) {
         case Middle: return "middle";
         case Unknown: return "unknown";
     }
+    return "unknown";
 }
 
