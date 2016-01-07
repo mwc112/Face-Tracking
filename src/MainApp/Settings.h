@@ -9,6 +9,8 @@ class Settings {
 public:
   static Settings* getInstance();
   void setCamera(int camera);
+  void setVertThresh(int thresh);
+  int getVertThresh();
   int getCamera();
   void addVideoObserver(VideoManager* vm);
   int getCameraCount();
@@ -22,7 +24,8 @@ private:
   Settings();
   int currCamera;
   std::vector<VideoManager*> observers;
-  int maxCamera;
+  int maxCamera; 
+  int vertThresh;
   bool trackingState, flipFrame, equaliseFrame;
 };
 

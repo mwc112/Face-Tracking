@@ -5,6 +5,8 @@
 #include <math.h>
 #include <dlib/dlib/geometry/vector.h>
 #include <dlib/dlib/geometry/point_transforms.h>
+#include "../MainApp/Settings.h"
+
 
 using namespace cv;
 using namespace std;
@@ -66,7 +68,6 @@ LR directionFromNoseRidge(Face face) {
     noseBottom = rotate_point(noseTop, noseBottom, eyeAngle + M_PI_2);
     
     auto m = (float)(noseBottom.x() - noseTop.x())/(float)(noseBottom.y() - noseTop.y());
-    
     auto threshold = 0.2;
     if (m <= threshold && m >= -threshold) {
         return Middle;
@@ -85,11 +86,11 @@ TB directionFromEyeBrow(Face face){
     
     
     auto relDist = (b/a) * 100; 
-    std::cout << relDist << std::endl;
-    auto threshold = 0.23;
-    if (relDist < threshold - 0.02) {
+    Settings* settings = Settings::getInstance();
+    auto threshold = settings->getVertThresh();
+    if (relDist < threshold - 2) {
         return Top;
-    } else if (relDist > threshold + 0.2) {
+    } else if (relDist > threshold + 2) {
         return Bottom;
     }
     return Mid;

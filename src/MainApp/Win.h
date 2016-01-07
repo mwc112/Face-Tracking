@@ -14,12 +14,15 @@ public:
 private:
   dlib::list_box cameras;
   void on_camera_select(unsigned long i);
+  void on_vert_thresh_scroll();
   void on_off_clicked();
   void on_flip_clicked();
   void on_equalise_clicked();
   dlib::toggle_button off, flip_frame, equalise_frame;
   dlib::label detection_label;
+  dlib::label vert_thresh_label;
   grid_widget grid;
+  dlib::scroll_bar vert_thresh;
 };
 
 #endif

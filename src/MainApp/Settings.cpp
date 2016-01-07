@@ -18,6 +18,12 @@ void Settings::setCamera(int camera) {
   } 
 }
 
+void Settings::setVertThresh(int thresh) {
+  vertThresh = thresh;
+}
+int Settings::getVertThresh() {
+  return vertThresh;
+}
 
 bool Settings::toggleTrackingState() {
   trackingState = !trackingState;
@@ -51,6 +57,7 @@ Settings* Settings::getInstance(){
 
 Settings::Settings(){
   currCamera = 0;
+  vertThresh = 28;
   trackingState = true;
   flipFrame = false;
   equaliseFrame = false;

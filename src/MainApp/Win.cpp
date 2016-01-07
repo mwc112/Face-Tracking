@@ -7,7 +7,7 @@
 #include <dlib/dlib/array.h>
 
 
-Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detection_label(*this), flip_frame(*this), equalise_frame(*this){
+Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 2,2), detection_label(*this), flip_frame(*this), equalise_frame(*this), vert_thresh(*this, dlib::scroll_bar::VERTICAL), vert_thresh_label(*this){
   Settings* settings = Settings::getInstance();
   set_size(1280,760);
   set_title("MyEye configuration");
@@ -44,6 +44,16 @@ Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detecti
   equalise_frame.set_click_handler(*this,&Win::on_equalise_clicked);
   equalise_frame.set_pos(140,10);
   equalise_frame.set_name("equalise");
+
+  vert_thresh.set_pos(1000,10);
+  vert_thresh.set_length(100);
+  vert_thresh.set_max_slider_pos(50);
+  vert_thresh.set_slider_pos(28);
+  vert_thresh.set_scroll_handler(*this, &Win::on_vert_thresh_scroll);
+  
+  vert_thresh_label.set_pos(1000, 120);
+  vert_thresh_label.set_text(std::to_string(vert_thresh.slider_pos())); 
+    
   show();
 } 
 
@@ -77,13 +87,17 @@ void Win::on_off_clicked(){
     off.set_name("on");
   }
 }
+void Win::on_vert_thresh_scroll(){
+  Settings* settings = Settings::getInstance();
+  settings->setVertThresh(vert_thresh.slider_pos());
+  vert_thresh_label.set_text(std::to_string(vert_thresh.slider_pos()));
+}
 
 Win::~Win(){	
   close_window();
 }
 
 std::string directionName(Direction d);
-
 void Win::set_focus(Direction d){
   switch (d){
     case Top_Left : {grid.set_focus(0,0);
