@@ -19,7 +19,6 @@ Face FeatureTracker::findFeaturesInFace(Mat head, dlib::rectangle faceRect) {
     //detection
     dlib::cv_image<dlib::bgr_pixel> cimg(head);
     dlib::full_object_detection shape = sp(cimg, faceRect);
-    
     Point offset;
     Size wholesize;
     head.locateROI(wholesize, offset);
@@ -60,6 +59,10 @@ Face FeatureTracker::getFeatures(Mat frame) {
         if (dets.size() >= 1) {
             prevhead = rectangle_to_rect(dets[0]);
             return findFeaturesInFace(frame, dets[0]);
+        } else {
+          //try to find features anyway
+          dlib::rectangle frameRectangle(0,0,frame.size().width,frame.size().height);
+          auto f = findFeaturesInFace(frame, frameRectangle);
         }
         //we throw an exception here because we don't have a face to return this frame.
         //TODO throw sensible exception
@@ -68,19 +71,4 @@ Face FeatureTracker::getFeatures(Mat frame) {
 }
 
 
-void equalizeFrame(Mat &frame) {
-    //this should help in high contrast settings (eg if a window is behind you)
-    //equalize the Value channel
-    Mat channels[3];
-    //convert to HSV from RGB
-    cvtColor(frame, frame, CV_RGB2HSV);
-    //split into H, S and V channels
-    split(frame, channels);
-    //equalize only the V channel.
-    equalizeHist(channels[2], channels[2]);
-    //remerge
-    merge(channels, 3, frame);
-    //convert back to RGB
-    cvtColor(frame, frame, CV_HSV2RGB);
-}
 

@@ -24,6 +24,14 @@ bool Settings::toggleTrackingState() {
   return trackingState;
 }
 
+bool Settings::toggleEqualiseFrame() {
+  equaliseFrame = !equaliseFrame;
+  for (int i = 0; i < observers.size(); i++){
+    observers[i]->equaliseFrame(equaliseFrame);
+  } 
+  return equaliseFrame;
+}
+
 bool Settings::toggleFlipFrame() {
   flipFrame = !flipFrame;
   for (int i = 0; i < observers.size(); i++){
@@ -45,6 +53,7 @@ Settings::Settings(){
   currCamera = 0;
   trackingState = true;
   flipFrame = false;
+  equaliseFrame = false;
   int i = -1;
   try { 
     while(true){

@@ -7,7 +7,7 @@
 #include <dlib/dlib/array.h>
 
 
-Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 2,2), detection_label(*this), flip_frame(*this){
+Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detection_label(*this), flip_frame(*this), equalise_frame(*this){
   Settings* settings = Settings::getInstance();
   set_size(1280,760);
   set_title("MyEye configuration");
@@ -41,6 +41,9 @@ Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 2,2), detecti
   flip_frame.set_pos(100,10);
   flip_frame.set_name("flip");
  
+  equalise_frame.set_click_handler(*this,&Win::on_equalise_clicked);
+  equalise_frame.set_pos(140,10);
+  equalise_frame.set_name("equalise");
   show();
 } 
 
@@ -48,6 +51,14 @@ void Win::on_camera_select(unsigned long i){
   Settings* settings = Settings::getInstance();
   if (i != settings->getCamera()) {
     settings->setCamera(i);
+  }
+}
+void Win::on_equalise_clicked(){
+  Settings* settings = Settings::getInstance();
+  if (settings->toggleEqualiseFrame()) {
+    equalise_frame.set_name("no equalise");
+  } else {
+    equalise_frame.set_name("equalise");
   }
 }
 void Win::on_flip_clicked(){

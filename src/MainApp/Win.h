@@ -16,7 +16,8 @@ private:
   void on_camera_select(unsigned long i);
   void on_off_clicked();
   void on_flip_clicked();
-  dlib::toggle_button off, flip_frame;
+  void on_equalise_clicked();
+  dlib::toggle_button off, flip_frame, equalise_frame;
   dlib::label detection_label;
   grid_widget grid;
 };
