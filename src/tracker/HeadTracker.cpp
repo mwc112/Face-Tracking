@@ -78,20 +78,21 @@ LR directionFromNoseRidge(Face face) {
 }
 
 TB directionFromEyeBrow(Face face){
-    //TODO make relative
-    auto upperRightEye = convert(face.landmarks[19]); 
-    auto rightEyebrow = convert(face.landmarks[37]);
-    auto distance = dlib::length(upperRightEye - rightEyebrow);
-  
-    if (distance > 41) {
+    auto outerRightEye = convert(face.landmarks[42]), innerRightEye = convert(face.landmarks[45]);
+    auto upperRightEye = convert(face.landmarks[44]), upperEyebrow = convert(face.landmarks[26]);
+    auto a = dlib::length(outerRightEye - innerRightEye);
+    auto b = abs(upperEyebrow.y() - upperRightEye.y());
+    
+    
+    auto relDist = (b/a) * 100; 
+    std::cout << relDist << std::endl;
+    auto threshold = 0.23;
+    if (relDist < threshold - 0.02) {
         return Top;
-        std::cout << "t" << distance << std::endl;
-    } else if (distance < 39) {
+    } else if (relDist > threshold + 0.2) {
         return Bottom;
-        std::cout << "b" << distance << std::endl;
     }
     return Mid;
-
 }
 
 

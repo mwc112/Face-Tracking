@@ -87,7 +87,7 @@ void wm::set_focus_to(Display* d, int x, int y){
 	int move_x = x - root_x;
 	int move_y = y - root_y;
 
-	XWarpPointer(d, None, None, 0, 0, 0, 0, move_x, move_y);
+//	XWarpPointer(d, None, None, 0, 0, 0, 0, move_x, move_y);
 	
 	XSetInputFocus(d, windows[i*5], RevertToNone, CurrentTime);
 	XFlush(d);
