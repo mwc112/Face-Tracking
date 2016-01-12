@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <unordered_map>
 #include <vector>
+#include <unistd.h>
+#include <iostream>
 
 extern "C"{
 #include <X11/Xlib.h>
@@ -19,7 +21,7 @@ class wm{
 
 private:
 	std::unordered_map<Window, int[2]> *win_mouse;
-
+    Window ourWindow;
 public:
 	typedef enum Direction {
 	    Left,
@@ -39,6 +41,11 @@ public:
 
 	wm(){
 		win_mouse = new std::unordered_map<Window, int[2]>();
+		Display *d = XOpenDisplay(NULL);
+		int revert_to_return;
+		usleep(100);
+		XGetInputFocus(d, &ourWindow, &revert_to_return);
+        XCloseDisplay(d);
 	}
 };
 

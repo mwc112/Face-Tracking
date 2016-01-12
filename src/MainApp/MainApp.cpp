@@ -36,9 +36,9 @@ int main(int argc, char* argv[])
     FeatureTracker featureTracker;
 
     HeadTracker headTracker;
+    Win win; 
     wm w_manager;
-    
-    Win win;   
+      
     
     Frame frame;
     while (!win.is_closed()) {

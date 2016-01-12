@@ -2,7 +2,7 @@
 #include <X11/extensions/Xrandr.h>
 #include <climits>
 #include <iostream>
-
+#include <cstring>
 bool pointInPolygon(windowRect wr, int x, int y);
 
 Status wm::get_root_windows(Display *d, Window **children_windows_ret,
@@ -93,18 +93,31 @@ void wm::set_focus_screen(Direction direction){
     XCloseDisplay(d);
 }
 
+void focus_a_window(Display *d, Window w) {
+	XClientMessageEvent ev;
+    std::memset (&ev, 0, sizeof ev);
+    ev.type = ClientMessage;
+    ev.window = w;
+    ev.message_type = XInternAtom(d, "_NET_ACTIVE_WINDOW", True);
+    ev.format = 32;
+    ev.data.l[0] = 1;
+    ev.data.l[1] = CurrentTime;
+    ev.data.l[2] = ev.data.l[3] = ev.data.l[4] = 0;
+    XSendEvent (d, RootWindow(d, XDefaultScreen(d)), False,
+    SubstructureRedirectMask |SubstructureNotifyMask, (XEvent*)&ev);
+}
+
 void wm::set_focus_to(Display* d, int x, int y){
 
 	auto windows = get_client_window_list(d);
 
 	int i;
+	windowRect *topmost;
 	for(i = 3; i < windows.size(); i++){
-		bool in = pointInPolygon(windows[i], x, y);
-		if(in){
-			break;
+		if (pointInPolygon(windows[i], x, y)) {
+		    topmost = &windows[i];
 		}
 	}
-
 
 	int root_x, root_y;
 	get_pointer_location(d, &root_x, &root_y);
@@ -112,9 +125,9 @@ void wm::set_focus_to(Display* d, int x, int y){
 	int move_x = x - root_x;
 	int move_y = y - root_y;
 
-	//XWarpPointer(d, None, None, 0, 0, 0, 0, move_x, move_y);
+	XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
+	focus_a_window(d, topmost->window);
 	
-	XSetInputFocus(d, windows[i].window, RevertToNone, CurrentTime);
 	XFlush(d);
 }
 
@@ -136,14 +149,14 @@ void wm::get_pointer_location(Display *d, int *x_ret, int *y_ret){
 }
 
 bool pointInPolygon(windowRect wr, int x, int y) {
-    std::cout << (x > wr.x)  << ": x:" << wr.x << " W:" << wr.w  << ":" << (y > wr.y) << ":" << (y < wr.y + wr.h)  << std::endl;
+    //std::cout << (x > wr.x)  << ": x:" << wr.x << " W:" << wr.w  << ":" << (y > wr.y) << ":" << (y < wr.y + wr.h)  << std::endl;
 	return (x > wr.x && x < wr.x + wr.w && y > wr.y && y < wr.y + wr.h);
 
 }
 
 
 std::vector<windowRect> wm::get_client_window_list(Display* d){
-	Atom a = XInternAtom(d, "_NET_CLIENT_LIST" , true);
+/*	Atom a = XInternAtom(d, "_NET_CLIENT_LIST" , true);
   Atom actualType;
   int format;
   unsigned long bytesAfter;
@@ -162,24 +175,25 @@ std::vector<windowRect> wm::get_client_window_list(Display* d){
                 &bytesAfter,
                 &data);
 	
-	std::vector<windowRect> windows;
+	
   if (status >= Success && length)
   {
      long *array = (long*)data;
      for (int k = 0; k < length; k++)
-     {
+     {*/std::vector<windowRect> windows;
 				Window root;
 				Window parent;
 				Window* children;
 				unsigned int nchildren;
-				XQueryTree(d, array[k], &root, &parent, &children, &nchildren);
-				XWindowAttributes attr;
-				XGetWindowAttributes(d, parent, &attr);
-				
-                windows.push_back(windowRect(parent, attr.x, attr.y, attr.width, attr.height));
+				XQueryTree(d, XDefaultRootWindow(d), &root, &parent, &children, &nchildren);
+				for (int i = 0; i < nchildren; i++) {
+    				XWindowAttributes attr;
+    				XGetWindowAttributes(d, children[i], &attr);
+                    windows.push_back(windowRect(children[i], attr.x, attr.y, attr.width, attr.height));
+                }
                 
-     }
-  }
+    /* }
+  }*/
   return windows;
 }
 
