@@ -4,7 +4,7 @@ project( Demo )
 include_directories( /usr/local/include/ )
 
 add_library(WM wm.cpp wm.h)
-target_link_libraries(WM X11)
+target_link_libraries(WM X11 Xrandr)
 
 enable_testing()
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})

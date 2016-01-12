@@ -3,10 +3,17 @@
 
 #include <stdio.h>
 #include <unordered_map>
+#include <vector>
 
 extern "C"{
 #include <X11/Xlib.h>
 }
+
+struct windowRect {
+    Window window;
+    unsigned long x,y,w,h;
+    windowRect(Window window, unsigned long x, unsigned long y, unsigned long w, unsigned long h) : window(window), x(x), y(y), w(w), h(h) {};
+};
 
 class wm{
 
@@ -26,8 +33,7 @@ public:
 	void print_attr(Display*, Window*, XWindowAttributes*, int); 
 	void set_focus_to(Display*, int, int);
 	void get_pointer_location(Display*, int*, int*);
-	void get_client_window_list(Display*, long**, unsigned long*);
-	bool pointInPolygon(long *window, int x, int y);
+	std::vector<windowRect> get_client_window_list(Display*);
 	void set_focus_screen(Direction);
 	void save_pointer(Window);
 
