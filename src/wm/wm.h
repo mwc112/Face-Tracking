@@ -43,7 +43,7 @@ public:
 		win_mouse = new std::unordered_map<Window, int[2]>();
 		Display *d = XOpenDisplay(NULL);
 		int revert_to_return;
-		usleep(100);
+		usleep(1000000);
 		XGetInputFocus(d, &ourWindow, &revert_to_return);
         XCloseDisplay(d);
 	}

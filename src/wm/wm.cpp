@@ -116,6 +116,8 @@ void wm::set_focus_to(Display* d, int x, int y){
 	for(i = 3; i < windows.size(); i++){
 		if (pointInPolygon(windows[i], x, y)) {
 		    topmost = &windows[i];
+	std::cout << "Found at  " << x << "," << y << ":" << topmost->x << "," << topmost->y << " " << topmost->w << "," << topmost->h  << std::endl;
+break;
 		}
 	}
 
@@ -124,7 +126,11 @@ void wm::set_focus_to(Display* d, int x, int y){
 	
 	int move_x = x - root_x;
 	int move_y = y - root_y;
-
+//	XMapWindow(d, topmost->window);
+	//XSync(d, true);
+std::cout << "our window " << ourWindow << std::endl;
+	//XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
+	std::cout << "Chaing to " << topmost->x << "," << topmost->y << " " << topmost->w << "," << topmost->h  << std::endl;
 	XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
 	focus_a_window(d, topmost->window);
 	
@@ -156,7 +162,7 @@ bool pointInPolygon(windowRect wr, int x, int y) {
 
 
 std::vector<windowRect> wm::get_client_window_list(Display* d){
-/*	Atom a = XInternAtom(d, "_NET_CLIENT_LIST" , true);
+	/*Atom a = XInternAtom(d, "_NET_CLIENT_LIST" , true);
   Atom actualType;
   int format;
   unsigned long bytesAfter;
@@ -175,12 +181,13 @@ std::vector<windowRect> wm::get_client_window_list(Display* d){
                 &bytesAfter,
                 &data);
 	
-	
+
   if (status >= Success && length)
   {
      long *array = (long*)data;
      for (int k = 0; k < length; k++)
-     {*/std::vector<windowRect> windows;
+     {*/
+	std::vector<windowRect> windows;
 				Window root;
 				Window parent;
 				Window* children;
@@ -189,11 +196,13 @@ std::vector<windowRect> wm::get_client_window_list(Display* d){
 				for (int i = 0; i < nchildren; i++) {
     				XWindowAttributes attr;
     				XGetWindowAttributes(d, children[i], &attr);
-                    windows.push_back(windowRect(children[i], attr.x, attr.y, attr.width, attr.height));
+if (attr.map_state == IsViewable) {
+                	    windows.push_back(windowRect(children[i], attr.x, attr.y, attr.width, attr.height));
+}
                 }
                 
-    /* }
-  }*/
+ //    }
+//  }
   return windows;
 }
 

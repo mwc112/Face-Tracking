@@ -50,12 +50,12 @@ Settings* Settings::getInstance(){
 }
 
 Settings::Settings(){
-  currCamera = 0;
+  currCamera = 1;
   trackingState = true;
-  flipFrame = false;
+  flipFrame = true;
   equaliseFrame = false;
   int i = -1;
-  try { 
+  /*try { 
     while(true){
       CameraInput ci = CameraInput(i + 1);
       ci.getFrame();
@@ -63,7 +63,8 @@ Settings::Settings(){
     } 
   } catch (NoInput e) {
     maxCamera = i;
-  } 
+  } */
+maxCamera = 1;
   
 }
 
