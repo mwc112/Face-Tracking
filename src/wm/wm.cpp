@@ -129,7 +129,6 @@ void wm::set_focus_to(Display* d, int x, int y){
 
 		if (attr.map_state == IsViewable && pointInPolygon(attr.x, attr.y, attr.width, attr.height, x, y)) {
 		    topmost = windows[i];
-//std::cout << "Found at  " << x << "," << y << ":" << topmost->x << "," << topmost->y << " " << topmost->w << "," << topmost->h  << std::endl;
 		}
 	}
 
@@ -138,11 +137,7 @@ void wm::set_focus_to(Display* d, int x, int y){
 	
 	int move_x = x - root_x;
 	int move_y = y - root_y;
-//	XMapWindow(d, topmost->window);
-	//XSync(d, true);
-std::cout << "our window " << ourWindow << std::endl;
-	//XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
-	//std::cout << "Chaing to " << topmost->x << "," << topmost->y << " " << topmost->w << "," << topmost->h  << std::endl;
+
 	XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
 	focus_a_window(d, topmost);
 	
