@@ -122,7 +122,6 @@ void wm::set_focus_to(Display* d, int x, int y){
 	int i;
 	Window topmost;
 
-	XWindowAttributes topmostAttr;
 	for(i = 3; i < windows.size(); i++){
 		XWindowAttributes attr;
     		XGetWindowAttributes(d, windows[i], &attr);
