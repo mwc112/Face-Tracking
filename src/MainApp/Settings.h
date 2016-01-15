@@ -16,6 +16,8 @@ public:
   bool toggleFlipFrame();
   bool toggleEqualiseFrame();
   bool getTrackingState();
+  bool getFrameFlipped();
+  bool getEqualiseFrame();
   Settings(Settings const&) = delete;
   void operator=(Settings const&)  = delete; 
 private:

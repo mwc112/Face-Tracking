@@ -9,20 +9,21 @@
 
 Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detection_label(*this), flip_frame(*this), equalise_frame(*this){
   Settings* settings = Settings::getInstance();
-  set_size(1280,760);
+  set_size(220+640+10,10+480+10);
   set_title("MyEye configuration");
   dlib::array<std::string> l;
   for (int i = 0; i < settings->getCameraCount();  i++){
-    auto str = std::to_string(i);
+    auto str = "cam " + std::to_string(i);
     l.push_back(str);
   }
   
   dlib::list_box_style_default s;
   cameras.load(l);
   cameras.set_style(s);
-  cameras.set_size(50,20);
+  cameras.set_pos(10,10);
+  cameras.set_size(50,36);
   cameras.set_click_handler(*this,&Win::on_camera_select);
- 
+  cameras.select(settings->getCamera());
   detection_label.set_pos(10, 260);
   detection_label.set_text("No Detection"); 
 
@@ -34,16 +35,16 @@ Win::Win() : image(*this), cameras(*this), off(*this), grid(*this, 1,2), detecti
   image.set_pos(220,10);
 
   off.set_click_handler(*this,&Win::on_off_clicked);
-  off.set_pos(50,10);
-  off.set_name("off");
+  off.set_pos(60,10);
+  update_on_off_button(settings->getTrackingState());
 
   flip_frame.set_click_handler(*this,&Win::on_flip_clicked);
-  flip_frame.set_pos(100,10);
-  flip_frame.set_name("flip");
+  flip_frame.set_pos(110,10);
+  update_flip_button(settings->getFrameFlipped());
  
   equalise_frame.set_click_handler(*this,&Win::on_equalise_clicked);
-  equalise_frame.set_pos(140,10);
-  equalise_frame.set_name("equalise");
+  equalise_frame.set_pos(150,10);
+  update_equalise_button(settings->getEqualiseFrame());
   show();
 } 
 
@@ -55,29 +56,47 @@ void Win::on_camera_select(unsigned long i){
 }
 void Win::on_equalise_clicked(){
   Settings* settings = Settings::getInstance();
-  if (settings->toggleEqualiseFrame()) {
+  update_equalise_button(settings->toggleEqualiseFrame());
+}
+void Win::update_equalise_button(bool equalised) {
+  if (equalised) {
     equalise_frame.set_name("no equalise");
+    equalise_frame.set_checked();
   } else {
     equalise_frame.set_name("equalise");
-  }
-}
-void Win::on_flip_clicked(){
-  Settings* settings = Settings::getInstance();
-  if (settings->toggleFlipFrame()) {
-    flip_frame.set_name("unflip");
-  } else {
-    flip_frame.set_name("flip");
-  }
-}
-void Win::on_off_clicked(){
-  Settings* settings = Settings::getInstance();
-  if (settings->toggleTrackingState()) {
-    off.set_name("off");
-  } else {
-    off.set_name("on");
+    equalise_frame.set_unchecked();
   }
 }
 
+void Win::on_flip_clicked(){
+  Settings* settings = Settings::getInstance();
+  update_flip_button(settings->toggleFlipFrame());
+}
+
+void Win::update_flip_button(bool flipped) {
+  if (flipped) {
+    flip_frame.set_name("unflip");
+    flip_frame.set_checked();
+  } else {
+    flip_frame.set_name("flip");
+    flip_frame.set_unchecked();
+  }
+}
+
+void Win::on_off_clicked(){
+  Settings* settings = Settings::getInstance();
+  update_on_off_button(settings->toggleTrackingState());
+
+}
+void Win::update_on_off_button(bool trackingState) {
+  if (trackingState) {
+    off.set_name("turn off");
+    off.set_unchecked();
+  } else {
+    off.set_name("turn on");
+    off.set_checked();
+  }
+}
 Win::~Win(){	
   close_window();
 }

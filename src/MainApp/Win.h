@@ -17,6 +17,9 @@ private:
   void on_off_clicked();
   void on_flip_clicked();
   void on_equalise_clicked();
+  void update_equalise_button(bool equalised);
+  void update_flip_button(bool flipped);
+  void update_on_off_button(bool trackingState);
   dlib::toggle_button off, flip_frame, equalise_frame;
   dlib::label detection_label;
   grid_widget grid;

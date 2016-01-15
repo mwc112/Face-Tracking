@@ -31,7 +31,9 @@ bool Settings::toggleEqualiseFrame() {
   } 
   return equaliseFrame;
 }
-
+bool Settings::getEqualiseFrame() {
+  return equaliseFrame;
+}
 bool Settings::toggleFlipFrame() {
   flipFrame = !flipFrame;
   for (int i = 0; i < observers.size(); i++){
@@ -39,7 +41,9 @@ bool Settings::toggleFlipFrame() {
   } 
   return flipFrame;
 }
-
+bool Settings::getFrameFlipped() {
+  return flipFrame;
+}
 int Settings::getCameraCount(){
   return maxCamera + 1;
 }
