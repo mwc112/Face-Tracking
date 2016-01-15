@@ -3,7 +3,15 @@
 #include <climits>
 #include <iostream>
 #include <cstring>
-bool pointInPolygon(windowRect wr, int x, int y);
+
+
+bool pointInPolygon(int wrx, int wry, int wrw, int wrh, int x, int y) {
+    //std::cout << (x > wr.x)  << ": x:" << wr.x << " W:" << wr.w  << ":" << (y > wr.y) << ":" << (y < wr.y + wr.h)  << std::endl;
+	return (x > wrx && x < wrx + wrw && y > wry && y < wry + wrh);
+
+}
+
+
 
 Status wm::get_root_windows(Display *d, Window **children_windows_ret,
                                          unsigned int *num_children_ret){
@@ -112,12 +120,16 @@ void wm::set_focus_to(Display* d, int x, int y){
 	auto windows = get_client_window_list(d);
 
 	int i;
-	windowRect *topmost;
+	Window topmost;
+
+	XWindowAttributes topmostAttr;
 	for(i = 3; i < windows.size(); i++){
-		if (pointInPolygon(windows[i], x, y)) {
-		    topmost = &windows[i];
-	std::cout << "Found at  " << x << "," << y << ":" << topmost->x << "," << topmost->y << " " << topmost->w << "," << topmost->h  << std::endl;
-break;
+		XWindowAttributes attr;
+    		XGetWindowAttributes(d, windows[i], &attr);
+
+		if (attr.map_state == IsViewable && pointInPolygon(attr.x, attr.y, attr.width, attr.height, x, y)) {
+		    topmost = windows[i];
+//std::cout << "Found at  " << x << "," << y << ":" << topmost->x << "," << topmost->y << " " << topmost->w << "," << topmost->h  << std::endl;
 		}
 	}
 
@@ -130,9 +142,9 @@ break;
 	//XSync(d, true);
 std::cout << "our window " << ourWindow << std::endl;
 	//XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
-	std::cout << "Chaing to " << topmost->x << "," << topmost->y << " " << topmost->w << "," << topmost->h  << std::endl;
-	XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
-	focus_a_window(d, topmost->window);
+	//std::cout << "Chaing to " << topmost->x << "," << topmost->y << " " << topmost->w << "," << topmost->h  << std::endl;
+	//XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
+	focus_a_window(d, topmost);
 	
 	XFlush(d);
 }
@@ -154,14 +166,7 @@ void wm::get_pointer_location(Display *d, int *x_ret, int *y_ret){
   }
 }
 
-bool pointInPolygon(windowRect wr, int x, int y) {
-    //std::cout << (x > wr.x)  << ": x:" << wr.x << " W:" << wr.w  << ":" << (y > wr.y) << ":" << (y < wr.y + wr.h)  << std::endl;
-	return (x > wr.x && x < wr.x + wr.w && y > wr.y && y < wr.y + wr.h);
-
-}
-
-
-std::vector<windowRect> wm::get_client_window_list(Display* d){
+std::vector<Window> wm::get_client_window_list(Display* d){
 	/*Atom a = XInternAtom(d, "_NET_CLIENT_LIST" , true);
   Atom actualType;
   int format;
@@ -187,19 +192,15 @@ std::vector<windowRect> wm::get_client_window_list(Display* d){
      long *array = (long*)data;
      for (int k = 0; k < length; k++)
      {*/
-	std::vector<windowRect> windows;
+	std::vector<Window> windows;
 				Window root;
 				Window parent;
 				Window* children;
 				unsigned int nchildren;
 				XQueryTree(d, XDefaultRootWindow(d), &root, &parent, &children, &nchildren);
 				for (int i = 0; i < nchildren; i++) {
-    				XWindowAttributes attr;
-    				XGetWindowAttributes(d, children[i], &attr);
-if (attr.map_state == IsViewable) {
-                	    windows.push_back(windowRect(children[i], attr.x, attr.y, attr.width, attr.height));
-}
-                }
+                	   	    windows.push_back(children[i]);
+                		}
                 
  //    }
 //  }
