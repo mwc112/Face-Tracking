@@ -143,7 +143,7 @@ void wm::set_focus_to(Display* d, int x, int y){
 std::cout << "our window " << ourWindow << std::endl;
 	//XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
 	//std::cout << "Chaing to " << topmost->x << "," << topmost->y << " " << topmost->w << "," << topmost->h  << std::endl;
-	//XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
+	XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
 	focus_a_window(d, topmost);
 	
 	XFlush(d);
