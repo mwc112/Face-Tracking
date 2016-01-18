@@ -6,12 +6,12 @@
 
 class CameraInput: public Input {
 public:
-    CameraInput(int camera);
-    ~CameraInput();
-    Frame getFrame();
+	CameraInput(int camera);
+	~CameraInput();
+	Frame getFrame();
 private:
-    cv::VideoCapture cap;
-    int camera;
+	cv::VideoCapture cap;
+	int camera;
 };
 
 #endif

@@ -6,11 +6,11 @@
 
 class FileInput: public Input {
 public:
-    FileInput(std::string filePath);
-    Frame getFrame();
+	FileInput(std::string filePath);
+	Frame getFrame();
 private:
-    cv::VideoCapture cap;
-    std::string filePath;
+	cv::VideoCapture cap;
+	std::string filePath;
 };
 
 #endif

@@ -1,5 +1,4 @@
 #include "HeadTracker.h"
-
 #include "opencv2/highgui/highgui.hpp"
 #include <iostream>
 #include <math.h>
@@ -16,8 +15,6 @@ point convert(Point p) {
 Point convert(point p) {
     return Point(p.x(), p.y());
 }
-
-
 
 Direction directionFromEyesToEdge(Face face) {
     auto outerRightEye = convert(face.landmarks[36]), outerLeftEye = convert(face.landmarks[45]);

@@ -5,14 +5,15 @@
 
 class Input {
 public:
-    virtual Frame getFrame() =0;
+	virtual Frame getFrame() =0;
 };
 
-
-class NoInput : std::exception {
+class NoInput: std::exception {
 public:
-    const std::string inputType;
-    const std::string inputLocation;
-    NoInput(std::string inputType, std::string inputLocation) : inputType(inputType), inputLocation(inputLocation) {}
+	const std::string inputType;
+	const std::string inputLocation;
+	NoInput(std::string inputType, std::string inputLocation) :
+			inputType(inputType), inputLocation(inputLocation) {
+	}
 };
 #endif

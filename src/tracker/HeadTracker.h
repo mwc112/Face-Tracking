@@ -7,16 +7,13 @@
 #include "Face.h"
 
 enum Direction {
-    Left,
-    Middle,
-    Right,
-    Unknown
+	Left, Middle, Right, Unknown
 };
 
 class HeadTracker {
 public:
-    Direction getDirection(Face face);
+	Direction getDirection(Face face);
 private:
-    Direction currentDirection;
+	Direction currentDirection;
 };
 #endif

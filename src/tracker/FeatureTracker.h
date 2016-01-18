@@ -8,12 +8,12 @@
 
 class FeatureTracker {
 public:
-    FeatureTracker();
-    Face getFeatures(cv::Mat frame);
+	FeatureTracker();
+	Face getFeatures(cv::Mat frame);
 private:
-    Face findFeaturesInFace(cv::Mat head, dlib::rectangle face);
-    cv::Rect prevhead;
-    dlib::frontal_face_detector detector;
-    dlib::shape_predictor sp;
+	Face findFeaturesInFace(cv::Mat head, dlib::rectangle face);
+	cv::Rect prevhead;
+	dlib::frontal_face_detector detector;
+	dlib::shape_predictor sp;
 };
 #endif

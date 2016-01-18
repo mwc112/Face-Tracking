@@ -3,18 +3,18 @@
 #include "Input.h"
 #include <string.h>
 
-class VideoManager{
+class VideoManager {
 
 public:
-  Frame getFrame();
-  void flipFrame(bool);
-  void equaliseFrame(bool);
-  void changeVideo(int camera);
-  void changeVideo(std::string path);
-  VideoManager();
+	Frame getFrame();
+	void flipFrame(bool);
+	void equaliseFrame(bool);
+	void changeVideo(int camera);
+	void changeVideo(std::string path);
+	VideoManager();
 private:
-  Input* ci = NULL;
-  bool flip, equalise;
+	Input* ci = NULL;
+	bool flip, equalise;
 };
 
 #endif
