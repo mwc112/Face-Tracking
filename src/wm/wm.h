@@ -11,6 +11,8 @@ extern "C" {
 #include <X11/Xlib.h>
 }
 
+/* Holds points in 2D space */
+
 struct point {
 	int x, y;
 	point(int x, int y) :
@@ -22,9 +24,10 @@ struct point {
 class wm {
 
 private:
-	std::unordered_map<Window, int[2]> *win_mouse;
 	Window ourWindow;
 public:
+
+	/* Enum used for direction being looked in to choose screen */
 	typedef enum Direction {
 		Left, Middle, Right, Unknown
 	} Direction;
@@ -33,13 +36,10 @@ public:
 			Display*, Window*, int, XWindowAttributes*);
 	void print_attr(Display*, Window*, XWindowAttributes*, int);
 	void set_focus_to(Display*, int, int);
-	void get_pointer_location(Display*, int*, int*);
 	std::vector<Window> get_client_window_list(Display*);
 	void set_focus_screen(Direction);
-	void save_pointer(Window);
 
 	wm() {
-		win_mouse = new std::unordered_map<Window, int[2]>();
 		Display *d = XOpenDisplay(NULL);
 		int revert_to_return;
 		usleep(1000000);

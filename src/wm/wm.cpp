@@ -126,7 +126,7 @@ void focus_a_window(Display *d, Window w) {
 	SubstructureRedirectMask | SubstructureNotifyMask, (XEvent*) &ev);
 }
 
-/*  */
+/* Sets focus to top window under point (x, y) on display d */
 
 void wm::set_focus_to(Display* d, int x, int y) {
 
@@ -147,7 +147,6 @@ void wm::set_focus_to(Display* d, int x, int y) {
 	}
 
 	int root_x, root_y;
-	get_pointer_location(d, &root_x, &root_y);
 
 	int move_x = x - root_x;
 	int move_y = y - root_y;
@@ -158,21 +157,7 @@ void wm::set_focus_to(Display* d, int x, int y) {
 	XFlush(d);
 }
 
-void wm::get_pointer_location(Display *d, int *x_ret, int *y_ret) {
-	bool got_pointer = false;
-	Window *c_wins;
-	unsigned int num_child;
-	Window r_win, c_win;
-	int win_x, win_y;
-	unsigned int mask;
-
-	get_root_windows(d, &c_wins, &num_child);
-
-	for (int i = 0; i < num_child; i++) {
-		got_pointer = XQueryPointer(d, c_wins[i], &r_win, &c_win, x_ret, y_ret,
-				&win_x, &win_y, &mask);
-	}
-}
+/* Returns list of children of the root window */
 
 std::vector<Window> wm::get_client_window_list(Display* d) {
 	std::vector<Window> windows;
@@ -185,10 +170,4 @@ std::vector<Window> wm::get_client_window_list(Display* d) {
 		windows.push_back(children[i]);
 	}
 	return windows;
-}
-
-void wm::save_pointer(Window w) {
-	if (win_mouse->find(w) == win_mouse->end()) {
-		return;
-	}
 }
