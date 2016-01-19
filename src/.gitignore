@@ -5,3 +5,6 @@ Makefile
 *.a
 runWmTests
 tracker/dlib/examples
+.cproject
+.settings
+.project
