@@ -11,6 +11,14 @@ extern "C" {
 #include <X11/Xlib.h>
 }
 
+struct point {
+	int x, y;
+	point(int x, int y) :
+			x(x), y(y) {}
+	point() :
+			x(0), y(0) {}
+};
+
 class wm {
 
 private:
