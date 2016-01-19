@@ -87,7 +87,7 @@ void calculate_screen_centers(Display *d, point &left, point &right) {
 	}
 
 	if (!(rightmostset && leftmostset)) {
-		exit(345);
+		exit(1);
 	}
 	XRRFreeScreenResources(screens);
 	left = leftmost;
@@ -122,8 +122,11 @@ void focus_a_window(Display *d, Window w) {
 	ev.data.l[0] = 1;
 	ev.data.l[1] = CurrentTime;
 	ev.data.l[2] = ev.data.l[3] = ev.data.l[4] = 0;
-	XSendEvent(d, RootWindow(d, XDefaultScreen(d)), False,
-	SubstructureRedirectMask | SubstructureNotifyMask, (XEvent*) &ev);
+	if(XSendEvent(d, RootWindow(d, XDefaultScreen(d)), False,
+		SubstructureRedirectMask | SubstructureNotifyMask, (XEvent*) &ev) == 0)
+	{
+		exit(1);
+	}
 }
 
 /* Sets focus to top window under point (x, y) on display d */
@@ -137,7 +140,10 @@ void wm::set_focus_to(Display* d, int x, int y) {
 
 	for (i = 3; i < windows.size(); i++) {
 		XWindowAttributes attr;
-		XGetWindowAttributes(d, windows[i], &attr);
+		if(XGetWindowAttributes(d, windows[i], &attr) == 0)
+		{
+			exit(1);
+		}
 
 		if (attr.map_state == IsViewable
 				&& pointInPolygon(attr.x, attr.y, attr.width, attr.height, x,
@@ -165,7 +171,11 @@ std::vector<Window> wm::get_client_window_list(Display* d) {
 	Window parent;
 	Window* children;
 	unsigned int nchildren;
-	XQueryTree(d, XDefaultRootWindow(d), &root, &parent, &children, &nchildren);
+	if(XQueryTree(d, XDefaultRootWindow(d), &root,
+													&parent, &children, &nchildren) == 0)
+	{
+		exit(1);
+	}
 	for (int i = 0; i < nchildren; i++) {
 		windows.push_back(children[i]);
 	}
