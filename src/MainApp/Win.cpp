@@ -23,7 +23,9 @@ Win::Win() :
 	cameras.set_pos(10, 10);
 	cameras.set_size(50, 36);
 	cameras.set_click_handler(*this, &Win::on_camera_select);
-	cameras.select(settings->getCamera());
+	if (settings->getCameraCount() > 0) {
+		cameras.select(settings->getCamera());
+	}
 	detection_label.set_pos(10, 260);
 	detection_label.set_text("No Detection");
 

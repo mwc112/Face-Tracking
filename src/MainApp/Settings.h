@@ -24,7 +24,7 @@ private:
 	Settings();
 	int currCamera;
 	std::vector<VideoManager*> observers;
-	int maxCamera;
+	int cameraCount;
 	bool trackingState, flipFrame, equaliseFrame;
 };
 
