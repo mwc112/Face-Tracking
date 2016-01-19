@@ -4,10 +4,20 @@
 #include <iostream>
 #include <cstring>
 
+
+/*** Functions returning Status return 0 if function fails ***/
+
+
+
+/* Returns true if point (x, y) is within 2D polygon with coordinates
+ * (wrx, wry), height wrh, width wrw                                 */
+
 bool pointInPolygon(int wrx, int wry, int wrw, int wrh, int x, int y) {
 	return (x > wrx && x < wrx + wrw && y > wry && y < wry + wrh);
 
 }
+
+/* Saves all children of the default root window in *children_windows_ret */
 
 Status wm::get_root_windows(Display *d, Window **children_windows_ret,
 		unsigned int *num_children_ret) {
@@ -19,6 +29,9 @@ Status wm::get_root_windows(Display *d, Window **children_windows_ret,
 	}
 }
 
+/* Saves array of attributes of children_windows in attrs_ret.
+ * In same order as in children_windows                         */
+
 Status wm::get_windows_attr(Display *d, Window *children_windows,
 		int num_children, XWindowAttributes *attrs_ret) {
 	for (int i = 0; i < num_children; i++) {
@@ -27,6 +40,8 @@ Status wm::get_windows_attr(Display *d, Window *children_windows,
 		}
 	}
 }
+
+/* Prints name, x, y, width and height of all windows in children_windows */
 
 void wm::print_attr(Display* d, Window *children_windows,
 		XWindowAttributes *attrs, int num_children) {
@@ -39,17 +54,15 @@ void wm::print_attr(Display* d, Window *children_windows,
 	}
 }
 
-struct point {
-	int x, y;
-	point(int x, int y) :
-			x(x), y(y) {}
-	point() :
-			x(0), y(0) {}
-};
+/* Returns point specifying centre of screen from screen information in info */
 
 point calculate_screen_center(XRRCrtcInfo *info) {
 	return point(info->width / 2 + info->x, info->height / 2 + info->y);
 }
+
+/* Calculates screen centres of right and left screens displaying Display d.
+ * Saves left centre in left and right centre in right
+ * Exits with code 345 if fails to get centres of both screens             */
 
 void calculate_screen_centers(Display *d, point &left, point &right) {
 	XRRScreenResources *screens = XRRGetScreenResources(d,
@@ -82,6 +95,8 @@ void calculate_screen_centers(Display *d, point &left, point &right) {
 }
 using namespace std;
 
+/* Calls to calculate screen centres and passes to set_focus_to */
+
 void wm::set_focus_screen(Direction direction) {
 	Display *d = XOpenDisplay(NULL);
 	Screen *s = DefaultScreenOfDisplay(d);
@@ -94,6 +109,8 @@ void wm::set_focus_screen(Direction direction) {
 	}
 	XCloseDisplay(d);
 }
+
+/* Builds message and sends to root window to focus window w on display d */
 
 void focus_a_window(Display *d, Window w) {
 	XClientMessageEvent ev;
@@ -108,6 +125,8 @@ void focus_a_window(Display *d, Window w) {
 	XSendEvent(d, RootWindow(d, XDefaultScreen(d)), False,
 	SubstructureRedirectMask | SubstructureNotifyMask, (XEvent*) &ev);
 }
+
+/* Sets focus to top window under point (x, y) on display d */
 
 void wm::set_focus_to(Display* d, int x, int y) {
 
@@ -128,7 +147,6 @@ void wm::set_focus_to(Display* d, int x, int y) {
 	}
 
 	int root_x, root_y;
-	get_pointer_location(d, &root_x, &root_y);
 
 	int move_x = x - root_x;
 	int move_y = y - root_y;
@@ -139,21 +157,7 @@ void wm::set_focus_to(Display* d, int x, int y) {
 	XFlush(d);
 }
 
-void wm::get_pointer_location(Display *d, int *x_ret, int *y_ret) {
-	bool got_pointer = false;
-	Window *c_wins;
-	unsigned int num_child;
-	Window r_win, c_win;
-	int win_x, win_y;
-	unsigned int mask;
-
-	get_root_windows(d, &c_wins, &num_child);
-
-	for (int i = 0; i < num_child; i++) {
-		got_pointer = XQueryPointer(d, c_wins[i], &r_win, &c_win, x_ret, y_ret,
-				&win_x, &win_y, &mask);
-	}
-}
+/* Returns list of children of the root window */
 
 std::vector<Window> wm::get_client_window_list(Display* d) {
 	std::vector<Window> windows;
@@ -166,10 +170,4 @@ std::vector<Window> wm::get_client_window_list(Display* d) {
 		windows.push_back(children[i]);
 	}
 	return windows;
-}
-
-void wm::save_pointer(Window w) {
-	if (win_mouse->find(w) == win_mouse->end()) {
-		return;
-	}
 }
