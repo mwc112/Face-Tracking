@@ -23,7 +23,9 @@ Win::Win() :
 	cameras.set_pos(10, 10);
 	cameras.set_size(50, 36);
 	cameras.set_click_handler(*this, &Win::on_camera_select);
-	if (settings->getCameraCount() > 0) {
+	if (settings->getCameraCount() == 0) {
+		dlib::message_box_blocking("Webcam required", "Please connect a webcam and restart the application");
+	} else {
 		cameras.select(settings->getCamera());
 	}
 	detection_label.set_pos(10, 260);
