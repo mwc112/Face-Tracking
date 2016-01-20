@@ -17,54 +17,67 @@ bool pointInPolygon(int wrx, int wry, int wrw, int wrh, int x, int y) {
 
 }
 
-/* Saves all children of the default root window in *children_windows_ret */
+/* Saves all children of the default root window in *childrenWindowsRet */
 
-Status wm::get_root_windows(Display *d, Window **children_windows_ret,
-		unsigned int *num_children_ret) {
-	Window root_window = XDefaultRootWindow(d);
+Status wm::getRootWindows(Display *d, Window **childrenWindowsRet,
+		unsigned int *numChildrenRet) {
+	Window rootWindow = XDefaultRootWindow(d);
 	Window root, parent;
-	if ((XQueryTree(d, root_window, &root, &parent, children_windows_ret,
-			num_children_ret)) == 0) {
+	if ((XQueryTree(d, rootWindow, &root, &parent, childrenWindowsRet,
+			numChildrenRet)) == 0) {
+		printf("ERROR: Failed to get root window children");
 		return 0;
 	}
-}
-
-/* Saves array of attributes of children_windows in attrs_ret.
- * In same order as in children_windows                         */
-
-Status wm::get_windows_attr(Display *d, Window *children_windows,
-		int num_children, XWindowAttributes *attrs_ret) {
-	for (int i = 0; i < num_children; i++) {
-		if (XGetWindowAttributes(d, children_windows[i], attrs_ret + i) == 0) {
-			return 0;
-		}
+	else
+	{
+		return 1;
 	}
 }
 
-/* Prints name, x, y, width and height of all windows in children_windows */
+/* Saves array of attributes of childrenWindows in attrsRet.
+ * In same order as in childrenWindows                         */
 
-void wm::print_attr(Display* d, Window *children_windows,
-		XWindowAttributes *attrs, int num_children) {
+Status wm::getWindowsAttr(Display *d, Window *childrenWindows,
+		int numChildren, XWindowAttributes *attrsRet) {
+	Status status = 1;
+	for (int i = 0; i < numChildren; i++) {
+		if (XGetWindowAttributes(d, childrenWindows[i], attrsRet + i) == 0) {
+			printf("ERROR: Failed to get attributes of window %li", childrenWindows[i]);
+			status = 0;
+		}
+	}
+	return status;
+}
+
+/* Prints name, x, y, width and height of all windows in childrenWindows */
+
+void wm::printAttr(Display* d, Window *childrenWindows,
+		XWindowAttributes *attrs, int numChildren) {
 	char* name;
 
-	for (int i = 0; i < num_children; i++) {
-		XFetchName(d, children_windows[i], &name);
-		printf("Name: %s\nx: %i  y: %i  size: %i, %i\n\n", name, attrs[i].x,
+	for (int i = 0; i < numChildren; i++) {
+		if(XFetchName(d, childrenWindows[i], &name) == 0)
+		{
+			printf("ERROR: Failed to get name of window %li", childrenWindows[i]);
+		}
+		else
+		{
+			printf("Name: %s\nx: %i  y: %i  size: %i, %i\n\n", name, attrs[i].x,
 				attrs[i].y, attrs[i].width, attrs[i].height);
+		}
 	}
 }
 
 /* Returns point specifying centre of screen from screen information in info */
 
-point calculate_screen_center(XRRCrtcInfo *info) {
+point calculateScreenCentres(XRRCrtcInfo *info) {
 	return point(info->width / 2 + info->x, info->height / 2 + info->y);
 }
 
 /* Calculates screen centres of right and left screens displaying Display d.
- * Saves left centre in left and right centre in right
- * Exits with code 345 if fails to get centres of both screens             */
+ * Saves left centre in left and right centre in right */
 
-void calculate_screen_centers(Display *d, point &left, point &right) {
+void calculateScreenCentres(Display *d, point &left, point &right) {
 	XRRScreenResources *screens = XRRGetScreenResources(d,
 			DefaultRootWindow(d));
 	XRRCrtcInfo *info = NULL;
@@ -73,7 +86,7 @@ void calculate_screen_centers(Display *d, point &left, point &right) {
 	for (int i = 0; i < screens->ncrtc; i++) {
 		info = XRRGetCrtcInfo(d, screens, screens->crtcs[i]);
 		if (info->width > 0 && info->height > 0) {
-			point sc = calculate_screen_center(info);
+			point sc = calculateScreenCentres(info);
 			if (sc.x < leftmost.x) {
 				leftmost = sc;
 				leftmostset = true;
@@ -87,7 +100,7 @@ void calculate_screen_centers(Display *d, point &left, point &right) {
 	}
 
 	if (!(rightmostset && leftmostset)) {
-		exit(345);
+		printf("ERROR: Failed to calculate screen centres");
 	}
 	XRRFreeScreenResources(screens);
 	left = leftmost;
@@ -95,24 +108,29 @@ void calculate_screen_centers(Display *d, point &left, point &right) {
 }
 using namespace std;
 
-/* Calls to calculate screen centres and passes to set_focus_to */
+/* Calls to calculate screen centres and passes to setFocusTo */
 
-void wm::set_focus_screen(Direction direction) {
+void wm::setFocusScreen(Direction direction) {
 	Display *d = XOpenDisplay(NULL);
+	if(d == NULL)
+	{
+		printf("ERROR: Failed to open default display");
+		return;
+	}
 	Screen *s = DefaultScreenOfDisplay(d);
 	point left, right;
-	calculate_screen_centers(d, left, right);
+	calculateScreenCentres(d, left, right);
 	if (direction == Left) {
-		set_focus_to(d, left.x, left.y);
+		setFocusTo(d, left.x, left.y);
 	} else if (direction == Right) {
-		set_focus_to(d, right.x, right.y);
+		setFocusTo(d, right.x, right.y);
 	}
 	XCloseDisplay(d);
 }
 
 /* Builds message and sends to root window to focus window w on display d */
 
-void focus_a_window(Display *d, Window w) {
+void focusAWindow(Display *d, Window w) {
 	XClientMessageEvent ev;
 	std::memset(&ev, 0, sizeof ev);
 	ev.type = ClientMessage;
@@ -122,24 +140,29 @@ void focus_a_window(Display *d, Window w) {
 	ev.data.l[0] = 1;
 	ev.data.l[1] = CurrentTime;
 	ev.data.l[2] = ev.data.l[3] = ev.data.l[4] = 0;
-	XSendEvent(d, RootWindow(d, XDefaultScreen(d)), False,
-	SubstructureRedirectMask | SubstructureNotifyMask, (XEvent*) &ev);
+	if(XSendEvent(d, RootWindow(d, XDefaultScreen(d)), False,
+		SubstructureRedirectMask | SubstructureNotifyMask, (XEvent*) &ev) == 0)
+	{
+		printf("ERROR: Failed to send focus event to window %li", w);
+	}
 }
 
 /* Sets focus to top window under point (x, y) on display d */
 
-void wm::set_focus_to(Display* d, int x, int y) {
+void wm::setFocusTo(Display* d, int x, int y) {
 
-	auto windows = get_client_window_list(d);
+	auto windows = getClientWindowList(d);
 
 	int i;
 	Window topmost;
 
 	for (i = 3; i < windows.size(); i++) {
 		XWindowAttributes attr;
-		XGetWindowAttributes(d, windows[i], &attr);
-
-		if (attr.map_state == IsViewable
+		if(XGetWindowAttributes(d, windows[i], &attr) == 0)
+		{
+			printf("ERROR: Failed to get window attributes for window %li", windows[i]);
+		}
+		else if (attr.map_state == IsViewable
 				&& pointInPolygon(attr.x, attr.y, attr.width, attr.height, x,
 						y)) {
 			topmost = windows[i];
@@ -151,21 +174,28 @@ void wm::set_focus_to(Display* d, int x, int y) {
 	int move_x = x - root_x;
 	int move_y = y - root_y;
 
-	XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime);
-	focus_a_window(d, topmost);
+	if(XSetInputFocus(d, ourWindow, RevertToNone, CurrentTime) == 0)
+	{
+		printf("ERROR: Failed to get window focus to myeye window");
+	}
+	focusAWindow(d, topmost);
 
 	XFlush(d);
 }
 
 /* Returns list of children of the root window */
 
-std::vector<Window> wm::get_client_window_list(Display* d) {
+std::vector<Window> wm::getClientWindowList(Display* d) {
 	std::vector<Window> windows;
 	Window root;
 	Window parent;
 	Window* children;
 	unsigned int nchildren;
-	XQueryTree(d, XDefaultRootWindow(d), &root, &parent, &children, &nchildren);
+	if(XQueryTree(d, XDefaultRootWindow(d), &root,
+													&parent, &children, &nchildren) == 0)
+	{
+		printf("ERROR: Failed to get children of root window");
+	}
 	for (int i = 0; i < nchildren; i++) {
 		windows.push_back(children[i]);
 	}
