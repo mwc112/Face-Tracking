@@ -38,6 +38,4 @@ public:
 		win_mouse = new std::unordered_map<Window, int[2]>();
 	}
 };
-
-
 #endif
