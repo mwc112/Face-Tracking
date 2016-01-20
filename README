@@ -1,0 +1,7 @@
+How to run the program
+
+cd ../EyetrackWM/src
+cmake .
+make run
+
+#Make sure you have at least one camera

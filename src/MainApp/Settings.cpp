@@ -44,7 +44,7 @@ bool Settings::getFrameFlipped() {
 	return flipFrame;
 }
 int Settings::getCameraCount() {
-	return maxCamera + 1;
+	return cameraCount;
 }
 
 Settings* Settings::getInstance() {
@@ -52,14 +52,20 @@ Settings* Settings::getInstance() {
 	return &instance;
 }
 
-Settings::Settings() {
-	currCamera = 0;
-	trackingState = true;
-	flipFrame = true;
-	equaliseFrame = false;
-	int i = -1;
-	maxCamera = 1;
-
+Settings::Settings() :
+    currCamera(0), trackingState(true),
+    flipFrame(true), equaliseFrame(false),
+    cameraCount(0) {
+	int i = 0;
+	try {
+		while (true) {
+			CameraInput ci = CameraInput(i);
+			ci.getFrame();
+			i += 1;
+		}
+	} catch (...) {
+		cameraCount = i;
+	}
 }
 
 void Settings::addVideoObserver(VideoManager* vm) {

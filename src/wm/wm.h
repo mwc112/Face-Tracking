@@ -22,31 +22,32 @@ struct point {
 };
 
 class wm {
-
-private:
-	Window ourWindow;
+  
 public:
-
-	/* Enum used for direction being looked in to choose screen */
-	typedef enum Direction {
+	//Enum used for direction being looked in to choose screen
+	enum Direction {
 		Left, Middle, Right, Unknown
-	} Direction;
-
-	Status getRootWindows(Display*, Window**, unsigned int*);
-	Status getWindowsAttr(
-			Display*, Window*, int, XWindowAttributes*);
-	void printAttr(Display*, Window*, XWindowAttributes*, int);
-	void setFocusTo(Display*, int, int);
-	std::vector<Window> getClientWindowList(Display*);
+	};
+  
 	void setFocusScreen(Direction);
 
 	wm() {
 		Display *d = XOpenDisplay(NULL);
 		int revert_to_return;
+    //this sleep is required so that the window is open
+    //  when we get our window.
 		usleep(1000000);
 		XGetInputFocus(d, &ourWindow, &revert_to_return);
 		XCloseDisplay(d);
 	}
+  
+private:
+  Status getRootWindows(Display*, Window**, unsigned int*);
+  Status getWindowsAttr(Display*, Window*, int, XWindowAttributes*);
+  void printAttr(Display*, Window*, XWindowAttributes*, int);
+  void setFocusTo(Display*, int, int);
+  std::vector<Window> getClientWindowList(Display*);
+  Window ourWindow;
 };
 
 #endif
