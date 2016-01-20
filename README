@@ -1,6 +1,7 @@
 How to run the program
 
-cd ../EyetrackWM/src
+In the source directory:
+
 cmake .
 make run
 
