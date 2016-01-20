@@ -65,7 +65,6 @@ Face FeatureTracker::getFeatures(Mat frame) {
           auto f = findFeaturesInFace(frame, frameRectangle);
         }
         //we throw an exception here because we don't have a face to return this frame.
-        //TODO throw sensible exception
         throw "feature";
     }
 }

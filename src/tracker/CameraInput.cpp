@@ -17,5 +17,4 @@ Frame CameraInput::getFrame() {
     } else {
         throw NoInput("camera", std::to_string(camera));
     }
-    
 }
