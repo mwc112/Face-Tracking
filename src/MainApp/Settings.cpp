@@ -53,7 +53,7 @@ Settings* Settings::getInstance() {
 }
 
 Settings::Settings() {
-	currCamera = 1;
+	currCamera = 0;
 	trackingState = true;
 	flipFrame = true;
 	equaliseFrame = false;
