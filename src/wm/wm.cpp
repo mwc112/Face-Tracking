@@ -75,8 +75,7 @@ point calculateScreenCentres(XRRCrtcInfo *info) {
 }
 
 /* Calculates screen centres of right and left screens displaying Display d.
- * Saves left centre in left and right centre in right
- * Exits with code 345 if fails to get centres of both screens             */
+ * Saves left centre in left and right centre in right */
 
 void calculateScreenCentres(Display *d, point &left, point &right) {
 	XRRScreenResources *screens = XRRGetScreenResources(d,
@@ -101,7 +100,7 @@ void calculateScreenCentres(Display *d, point &left, point &right) {
 	}
 
 	if (!(rightmostset && leftmostset)) {
-		exit(1);
+		printf("ERROR: Failed to calculate screen centres");
 	}
 	XRRFreeScreenResources(screens);
 	left = leftmost;
