@@ -8,7 +8,7 @@ public:
 		Left, Middle, Right, Unknown
 	} Direction;
 
-	void set_focus_screen(Direction);
+	void setFocusScreen(Direction);
 };
 
 #endif
