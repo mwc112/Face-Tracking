@@ -36,6 +36,7 @@ void grid_widget::set_focus(int x, int y){
   int h = (height()-5)/rows;
   clear_overlay();
   std::vector<overlay_rect> rects; 
+  
   for (int i = 0; i < rows; i++){
     for (int j = 0; j < cols; j++){
       int l = j*w;
@@ -46,8 +47,7 @@ void grid_widget::set_focus(int x, int y){
         rects.push_back(overlay_rect(dlib::rectangle(l,t,r,b), (dlib::rgb_alpha_pixel)hilightColor));
       } else {
         rects.push_back(overlay_rect(dlib::rectangle(l,t,r,b), (dlib::rgb_alpha_pixel)lowlightColor));    
-      }
-      
+      }      
     }
   }
   add_overlay(rects);

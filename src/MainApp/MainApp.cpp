@@ -18,12 +18,9 @@ using namespace cv;
 
 string directionName(Direction dir);
 
-
 void signalHandler(int signum) {
     exit(signum);
 }
-
-
 
 int main(int argc, char* argv[])
 {
@@ -34,13 +31,11 @@ int main(int argc, char* argv[])
     settings->addVideoObserver(&vm);
    
     FeatureTracker featureTracker;
-
     HeadTracker headTracker;
     wm w_manager;
-    
     Win win;   
-    
     Frame frame;
+    
     while (!win.is_closed()) {
         try {
             frame = vm.getFrame();
@@ -55,7 +50,6 @@ int main(int argc, char* argv[])
             }
         } catch (const char * e) {
             win.image.set_image(frame.dlibImage());
-            //cout << e << endl;
         } catch (NoInput e) {
             cout << "No Camera detected, exiting.." << endl;
             exit(0);

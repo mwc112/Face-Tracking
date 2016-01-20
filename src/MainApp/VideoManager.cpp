@@ -1,13 +1,3 @@
-//class VideoManager{
-//
-//public:
-//  Mat getFrame();
-//  void changeVideo(int camera);
-//  void changeVideo(String path);
-//  VideoManager();
-//private:
-//  input ci;
-//}
 #include "VideoManager.h"
 #include "CameraInput.h"
 #include "FileInput.h"
