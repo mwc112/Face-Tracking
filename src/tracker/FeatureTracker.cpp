@@ -10,9 +10,9 @@ Rect rectangle_to_rect(dlib::rectangle r) {
 	return Rect(r.left(), r.top(), r.width(), r.height());
 }
 
-FeatureTracker::FeatureTracker() {
+FeatureTracker::FeatureTracker(string shapePredictorPath) {
 	detector = dlib::get_frontal_face_detector();
-	dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> sp;
+	dlib::deserialize(shapePredictorPath) >> sp;
 }
 
 Face FeatureTracker::findFeaturesInFace(Mat head, dlib::rectangle faceRect) {

@@ -8,7 +8,7 @@
 
 class FeatureTracker {
 public:
-	FeatureTracker();
+  FeatureTracker(std::string shapePredictorPath);
 	Face getFeatures(cv::Mat frame);
 private:
 	Face findFeaturesInFace(cv::Mat head, dlib::rectangle face);

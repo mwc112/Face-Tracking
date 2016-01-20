@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
 	VideoManager vm;
 	settings->addVideoObserver(&vm);
 
-	FeatureTracker featureTracker;
+	FeatureTracker featureTracker("shape_predictor_68_face_landmarks.dat");
 
 	HeadTracker headTracker;
 	Win win;
