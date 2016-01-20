@@ -32,12 +32,13 @@ public:
 		Left, Middle, Right, Unknown
 	} Direction;
 
-	Status get_root_windows(Display*, Window**, unsigned int*);Status get_windows_attr(
+	Status getRootWindows(Display*, Window**, unsigned int*);
+	Status getWindowsAttr(
 			Display*, Window*, int, XWindowAttributes*);
-	void print_attr(Display*, Window*, XWindowAttributes*, int);
-	void set_focus_to(Display*, int, int);
-	std::vector<Window> get_client_window_list(Display*);
-	void set_focus_screen(Direction);
+	void printAttr(Display*, Window*, XWindowAttributes*, int);
+	void setFocusTo(Display*, int, int);
+	std::vector<Window> getClientWindowList(Display*);
+	void setFocusScreen(Direction);
 
 	wm() {
 		Display *d = XOpenDisplay(NULL);
