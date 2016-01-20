@@ -73,7 +73,7 @@ LR directionFromNoseRidge(Face face) {
         return Middle;
     } else if (m < -threshold) {
         return Left;
-    } else if (m > threshold){
+    } else {
         return Right;
     }
 }
@@ -107,11 +107,11 @@ Direction votesToDirection(std::vector<LR> LRVotes, std::vector<TB> TBVotes, Dir
       sameTB &= (TBVotes[i] == TBVotes[0]);
   }
   if  (sameLR && sameTB){
-    switch(TBVotes[0]){
+  	switch(TBVotes[0]){
       case (Top) : {
         switch(LRVotes[0]){
           case (Left) : {
-            return Top_Left;        
+          	return Top_Left;        
           }
           case (Middle) : {
             return Top_Middle;        
