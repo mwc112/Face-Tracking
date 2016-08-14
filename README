@@ -1,8 +1,0 @@
-How to run the program
-
-In the source directory:
-
-cmake .
-make run
-
-#Make sure you have at least one camera
